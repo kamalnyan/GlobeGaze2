@@ -4,7 +4,6 @@ import 'package:globegaze/components/Elevated_button.dart';
 import 'package:globegaze/components/textfield.dart';
 import 'package:globegaze/themes/colors.dart';
 import 'package:globegaze/themes/dark_light_switch.dart';
-import 'package:velocity_x/velocity_x.dart';
 
 import 'login_with_email_and_passsword.dart';
 import 'otp_screen.dart';
@@ -50,7 +49,7 @@ class _forgetPasswordState extends State<forgetPassword> {
                 height: 18,
               ),
              Padding(
-               padding: EdgeInsets.all(context.screenWidth * 0.02),
+               padding: EdgeInsets.all( 40.02),
                child: customTextField(isDarkMode: isDarkMode, name: 'Email', obs: false, keyboradType: TextInputType.name, icon: Icons.email_outlined)
              ),
               const SizedBox(
