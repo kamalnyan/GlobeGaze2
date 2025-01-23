@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "106779513980",
+    "project_id": "globe-gaze",
+    "storage_bucket": "globe-gaze.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106779513980:android:6d14c467aeaa22070c65f9",
+        "android_client_info": {
+          "package_name": "com.example.globegaze"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCUiONZ7rRUr9aoAWPWNc3-4ARJISAD_fE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

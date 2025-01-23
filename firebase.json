@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"android":{"default":{"projectId":"globe-gaze","appId":"1:106779513980:android:6d14c467aeaa22070c65f9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"globe-gaze","configurations":{"android":"1:106779513980:android:6d14c467aeaa22070c65f9","ios":"1:106779513980:ios:6964d553752266210c65f9"}}}}}}
