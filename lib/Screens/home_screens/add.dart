@@ -29,8 +29,7 @@ class _AddPageState extends State<AddPage> {
   final TextEditingController _postController = TextEditingController();
   final TextEditingController _destinationController = TextEditingController();
   final TextEditingController _budgetController = TextEditingController();
-  final TextEditingController _travelersCountController =
-      TextEditingController();
+  final TextEditingController _travelersCountController = TextEditingController();
   List<Map<String, dynamic>> _savedDrafts = [];
   late MediaProvider mediaProvider;
   late LocationProvider locationProvider;
@@ -224,8 +223,7 @@ class _AddPageState extends State<AddPage> {
                       children: [
                         _buildProfileRow(),
                         if (_isToggled)
-                          buildCreatePostForm(
-                              context, _selectDate, _endDate, _startDate)
+                          buildCreatePostForm(context, _selectDate, _endDate, _startDate)
                         else
                           buildStandardPost(
                             context,
