@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import '../../themes/colors.dart';
 
 class DestinationCard extends StatelessWidget {
   final String name;
@@ -39,8 +38,8 @@ class DestinationCard extends StatelessWidget {
       onTap: _launchMap,
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        padding: const EdgeInsets.all(16),
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Adjusted margin
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8), // Reduced bottom padding
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
@@ -60,7 +59,9 @@ class DestinationCard extends StatelessWidget {
           ],
           border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
+
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // 🌍 Destination Name & Rating
@@ -74,9 +75,9 @@ class DestinationCard extends StatelessWidget {
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    maxLines: 1, // Prevent overflow
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -96,69 +97,74 @@ class DestinationCard extends StatelessWidget {
 
             const SizedBox(height: 8),
 
-            // 📍 Location & Country (Responsive Wrap)
-            Wrap(
-              spacing: 6,
-              runSpacing: 4,
+            // 📍 Location & Country
+            Row(
               children: [
                 const Icon(CupertinoIcons.location_solid,
                     size: 18, color: Colors.redAccent),
-                Text(
-                  '$localty, $Country',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.white70,
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    '$localty, $Country',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white70,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10), // Slightly reduced spacing
 
             // 🏷️ Categories
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), // Reduced vertical padding
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                categories.split(',')[0], // Show only first category
+                categories.split(',')[0],
                 style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white,
                   fontWeight: FontWeight.w500,
-                  overflow: TextOverflow.ellipsis,
                 ),
+                overflow: TextOverflow.ellipsis,
                 maxLines: 1,
               ),
             ),
 
-            const SizedBox(height: 16),
+            const SizedBox(height: 10), // Adjusted spacing
 
-            // 🚗 Get Directions Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: _launchMap,
-                icon: const Icon(
-                  CupertinoIcons.arrow_turn_up_right,
-                  color: Colors.white,
-                  size: 10,
-                ),
-                label: const Text(
-                  'Get Directions',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent.withOpacity(0.8),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
+            // 🚗 Get Directions Button (Half-width)
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: 0.5, // 50% of the parent width
+                child: ElevatedButton.icon(
+                  onPressed: _launchMap,
+                  icon: const Icon(
+                    CupertinoIcons.arrow_turn_up_right,
+                    color: Colors.white,
+                    size: 12,
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 12, horizontal: 12),
-                  elevation: 2,
+                  label: const Text(
+                    'Directions',
+                    style: TextStyle(fontSize: 14, color: Colors.white),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueAccent.withOpacity(0.85),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 8, horizontal: 10), // Reduced vertical padding
+                    elevation: 4,
+                  ),
                 ),
               ),
             ),

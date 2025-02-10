@@ -76,11 +76,12 @@ class _ExploreState extends State<Explore> {
       if (mounted) {
         setState(() {
           places = fetchedPlaces;
-          // Sort the places in ascending order based on the timestamp
           places.sort((a, b) {
-            DateTime timeA = (a['properties']['createdAt'] as Timestamp).toDate();
-            DateTime timeB = (b['properties']['createdAt'] as Timestamp).toDate();
-            return timeA.compareTo(timeB); // Sorting in ascending order
+            DateTime timeA =
+            (a['properties']['createdAt'] as Timestamp).toDate();
+            DateTime timeB =
+            (b['properties']['createdAt'] as Timestamp).toDate();
+            return timeA.compareTo(timeB);
           });
           isLoading = false;
         });
@@ -111,23 +112,11 @@ class _ExploreState extends State<Explore> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: double.infinity,
-              height: 200,
-              color: Colors.grey[300],
-            ),
+            Container(width: double.infinity, height: 200, color: Colors.grey),
             const SizedBox(height: 10),
-            Container(
-              width: 150,
-              height: 20,
-              color: Colors.grey[300],
-            ),
+            Container(width: 150, height: 20, color: Colors.grey),
             const SizedBox(height: 5),
-            Container(
-              width: 100,
-              height: 20,
-              color: Colors.grey[300],
-            ),
+            Container(width: 100, height: 20, color: Colors.grey),
           ],
         ),
       ),
@@ -145,53 +134,6 @@ class _ExploreState extends State<Explore> {
         decoration: BoxDecoration(
           color: Colors.grey[300],
           borderRadius: BorderRadius.circular(16.0),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: 100,
-                  height: 20,
-                  color: Colors.grey[300],
-                ),
-                Row(
-                  children: List.generate(5, (index) {
-                    return Container(
-                      width: 15,
-                      height: 15,
-                      margin: const EdgeInsets.symmetric(horizontal: 2),
-                      color: Colors.grey[300],
-                    );
-                  }),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Container(
-                  width: 60,
-                  height: 20,
-                  color: Colors.grey[300],
-                ),
-                Container(
-                  width: 60,
-                  height: 20,
-                  color: Colors.grey[300],
-                ),
-              ],
-            ),
-            Container(
-              width: 120,
-              height: 20,
-              color: Colors.grey[300],
-            ),
-          ],
         ),
       ),
     );
@@ -211,37 +153,29 @@ class _ExploreState extends State<Explore> {
           double latitude = place['geometry']['coordinates'][1];
           int rate = place['properties']['rate'] ?? 0;
           String categories = place['properties']['kinds'] ?? '';
-          if (name.isNotEmpty &&
-              latitude != null &&
-              longitude != null &&
-              rate > 0 &&
-              categories.isNotEmpty) {
-            return FutureBuilder<Map<String, String>?>(
-              future: getLocationDetails(latitude, longitude),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return buildShimmerCard();
-                } else if (snapshot.hasError) {
-                  return const SizedBox.shrink();
-                } else if (snapshot.hasData) {
-                  Map<String, String> locationDetails = snapshot.data!;
-                  return DestinationCard(
-                    name: name,
-                    localty: locationDetails['locality'] ?? 'Unknown locality',
-                    Country: locationDetails['country'] ?? 'Unknown country',
-                    rate: rate,
-                    categories: categories,
-                    latitude: latitude,
-                    longitude: longitude,
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
+
+          return FutureBuilder<Map<String, String>?>(
+            future: getLocationDetails(latitude, longitude),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return buildShimmerCard();
+              } else if (snapshot.hasData) {
+                Map<String, String> locationDetails = snapshot.data!;
+                return DestinationCard(
+                  name: name,
+                  localty:
+                  locationDetails['locality'] ?? 'Unknown locality',
+                  Country: locationDetails['country'] ?? 'Unknown country',
+                  rate: rate,
+                  categories: categories,
+                  latitude: latitude,
+                  longitude: longitude,
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          );
         },
       ),
     )
@@ -252,48 +186,45 @@ class _ExploreState extends State<Explore> {
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
     bool isDarkMode = brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: darkLight(isDarkMode),
       body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
         child: Column(
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+            Padding(
+              padding:
+              const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
                     children: [
-                      Row(
-                        children: [
-                          const Icon(CupertinoIcons.location, size: 20, color: PrimaryColor),
-                          const SizedBox(width: 8),
-                          Text(_location, style: const TextStyle(fontSize: 15)),
-                        ],
-                      ),
-                      const SizedBox(height: 10),
-                      SizedBox(
-                        height: 45,
-                        child: CupertinoSearchTextField(
-                          enableIMEPersonalizedLearning: true,
-                          style: TextStyle(color: LightDark(isDarkMode)),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text('Suggestions', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                      const Icon(CupertinoIcons.location,
+                          size: 20, color: PrimaryColor),
+                      const SizedBox(width: 8),
+                      Text(_location, style: const TextStyle(fontSize: 15)),
                     ],
                   ),
-                ),
-                const SizedBox(height: 16),
-                isLoading ? buildShimmerCard() : buildPlaceCards(),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Text('Posts', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  CupertinoSearchTextField(
+                    style: TextStyle(color: LightDark(isDarkMode)),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text('Suggestions',
+                      style:
+                      TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
+            isLoading ? buildShimmerCard() : buildPlaceCards(),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text('Posts',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            ),
+
+            // 📥 Updated Posts Section
             StreamBuilder<List<Map<String, dynamic>>>(
               stream: addPost.fetchCommanPosts(),
               builder: (context, snapshot) {
@@ -306,12 +237,14 @@ class _ExploreState extends State<Explore> {
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
                   return const Center(child: Text('No posts available'));
                 }
+
                 final posts = snapshot.data!;
                 posts.sort((a, b) {
                   DateTime timeA = (a['createdAt'] as Timestamp).toDate();
                   DateTime timeB = (b['createdAt'] as Timestamp).toDate();
-                  return timeA.compareTo(timeB); // Sorting in ascending order
+                  return timeA.compareTo(timeB);
                 });
+
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -321,7 +254,8 @@ class _ExploreState extends State<Explore> {
                     return FutureBuilder<Widget>(
                       future: PostCard(context, postData),
                       builder: (context, postSnapshot) {
-                        if (postSnapshot.connectionState == ConnectionState.waiting) {
+                        if (postSnapshot.connectionState ==
+                            ConnectionState.waiting) {
                           return buildShimmerPost();
                         }
                         if (postSnapshot.hasError) {
@@ -334,11 +268,16 @@ class _ExploreState extends State<Explore> {
                 );
               },
             ),
+
+            // Group Explorer Posts Section
             StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance.collection('travel_posts').orderBy('timestamp', descending: false).snapshots(),
+              stream: FirebaseFirestore.instance
+                  .collection('travel_posts')
+                  .orderBy('timestamp', descending: false)
+                  .snapshots(),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return buildShimmerPost(); // Loading shimmer effect
+                  return buildShimmerPost();
                 }
                 if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
                   return const Center(child: Text('No posts yet.'));
@@ -348,20 +287,21 @@ class _ExploreState extends State<Explore> {
 
                 return ListView.builder(
                   shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
+                  physics: const NeverScrollableScrollPhysics(),
                   itemCount: posts.length,
                   itemBuilder: (context, index) {
                     var post = posts[index].data() as Map<String, dynamic>;
                     return GroupExplorerPostCard(
-                      destination: post['destinations'][0],  // Assuming first destination
+                      destination: post['destinations'][0],
                       budget: double.tryParse(post['budget'] ?? '0') ?? 0.0,
                       duration: int.tryParse(post['duration'] ?? '0') ?? 0,
-                      travelers: int.tryParse(post['travelersCount'] ?? '0') ?? 0,
+                      travelers:
+                      int.tryParse(post['travelersCount'] ?? '0') ?? 0,
                     );
                   },
                 );
               },
-            )
+            ),
           ],
         ),
       ),
