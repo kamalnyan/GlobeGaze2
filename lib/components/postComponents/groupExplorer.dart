@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:globegaze/themes/colors.dart';
 import 'package:intl/intl.dart';
+import '../../Screens/home_screens/explore.dart';
 import '../customTextFieldwidget.dart';
 
 Widget buildCreatePostForm(
@@ -32,51 +33,50 @@ Widget buildCreatePostForm(
   void _createPost() async {
     if (_formKey.currentState!.validate()) {
       try {
+        final destinations = destinationControllers.value
+            .map((c) => c.text.trim())
+            .where((text) => text.isNotEmpty)
+            .toList();
+        if (destinations.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Please enter at least one destination')),
+          );
+          return;
+        }
+
         await FirebaseFirestore.instance.collection('travel_posts').add({
-          'destinations': destinationControllers.value.map((c) => c.text).toList(),
+          'destinations': destinations,
           'startDate': startDate?.toIso8601String(),
           'endDate': endDate?.toIso8601String(),
-          'duration': _durationController.text,
-          'itinerary': _itineraryController.text,
-          'travelersCount': _travelersCountController.text,
-          'preferredAge': _preferredAgeController.text,
-          'genderPreference': _genderPreferenceController.text,
-          'budget': _budgetController.text,
-          'accommodation': _accommodationController.text,
-          'transportation': _transportationController.text,
-          'organizerName': _organizerNameController.text,
-          'contactInfo': _contactInfoController.text,
-          'socialMediaHandle': _socialMediaHandleController.text,
-          'travelInterests': _travelInterestsController.text,
-          'experienceLevel': _experienceLevelController.text,
-          'emergencyContact': _emergencyContactController.text,
-          'healthRestrictions': _healthRestrictionsController.text,
-          'timestamp': FieldValue.serverTimestamp(),
+          'duration': _durationController.text.trim(),
+          'itinerary': _itineraryController.text.trim(),
+          'travelersCount': _travelersCountController.text.trim(),
+          'preferredAge': _preferredAgeController.text.trim(),
+          'genderPreference': _genderPreferenceController.text.trim(),
+          'budget': _budgetController.text.trim(),
+          'accommodation': _accommodationController.text.trim(),
+          'transportation': _transportationController.text.trim(),
+          'organizerName': _organizerNameController.text.trim(),
+          'contactInfo': _contactInfoController.text.trim(),
+          'socialMediaHandle': _socialMediaHandleController.text.trim(),
+          'travelInterests': _travelInterestsController.text.trim(),
+          'experienceLevel': _experienceLevelController.text.trim(),
+          'emergencyContact': _emergencyContactController.text.trim(),
+          'healthRestrictions': _healthRestrictionsController.text.trim(),
+          'createdAt': FieldValue.serverTimestamp(),
         });
 
-        // Show success dialog
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: const Text("Success"),
-              content: const Text("Post Created Successfully!"),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text("OK"),
-                ),
-              ],
-            );
-          },
-        );
+        Navigator.of(context).pop(); // Close the form after submission
       } catch (e) {
         print("Error creating post: $e");
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to create post: $e")),
+        );
       }
     }
   }
+
+
 
   return Padding(
     padding: const EdgeInsets.all(16.0),

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:globegaze/themes/colors.dart';
@@ -7,6 +8,7 @@ import '../../apis/addPost.dart';
 import '../../apis/datamodel.dart';
 import '../../components/exploreComponents/postcard.dart';
 import '../../components/exploreComponents/suggestion.dart';
+import '../../components/postComponents/group_explorer_postcard.dart';
 import '../../components/postComponents/locationBottomSheet.dart';
 import '../../locationservices/locationForSUGGESATION.dart';
 import '../../themes/dark_light_switch.dart';
@@ -60,6 +62,7 @@ class _ExploreState extends State<Explore> {
       });
     }
   }
+
   Future<void> fetchPlaces() async {
     setState(() => isLoading = true);
     Map<String, double>? currentloc = await getLocationBounds();
@@ -73,6 +76,12 @@ class _ExploreState extends State<Explore> {
       if (mounted) {
         setState(() {
           places = fetchedPlaces;
+          // Sort the places in ascending order based on the timestamp
+          places.sort((a, b) {
+            DateTime timeA = (a['properties']['createdAt'] as Timestamp).toDate();
+            DateTime timeB = (b['properties']['createdAt'] as Timestamp).toDate();
+            return timeA.compareTo(timeB); // Sorting in ascending order
+          });
           isLoading = false;
         });
       }
@@ -124,6 +133,7 @@ class _ExploreState extends State<Explore> {
       ),
     );
   }
+
   Widget buildShimmerCard() {
     return Shimmer.fromColors(
       baseColor: Colors.grey[300]!,
@@ -186,6 +196,7 @@ class _ExploreState extends State<Explore> {
       ),
     );
   }
+
   Widget buildPlaceCards() {
     return places.isNotEmpty
         ? SizedBox(
@@ -200,7 +211,11 @@ class _ExploreState extends State<Explore> {
           double latitude = place['geometry']['coordinates'][1];
           int rate = place['properties']['rate'] ?? 0;
           String categories = place['properties']['kinds'] ?? '';
-          if (name.isNotEmpty && latitude != null && longitude != null && rate > 0 && categories.isNotEmpty) {
+          if (name.isNotEmpty &&
+              latitude != null &&
+              longitude != null &&
+              rate > 0 &&
+              categories.isNotEmpty) {
             return FutureBuilder<Map<String, String>?>(
               future: getLocationDetails(latitude, longitude),
               builder: (context, snapshot) {
@@ -292,6 +307,11 @@ class _ExploreState extends State<Explore> {
                   return const Center(child: Text('No posts available'));
                 }
                 final posts = snapshot.data!;
+                posts.sort((a, b) {
+                  DateTime timeA = (a['createdAt'] as Timestamp).toDate();
+                  DateTime timeB = (b['createdAt'] as Timestamp).toDate();
+                  return timeA.compareTo(timeB); // Sorting in ascending order
+                });
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -314,6 +334,34 @@ class _ExploreState extends State<Explore> {
                 );
               },
             ),
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance.collection('travel_posts').orderBy('timestamp', descending: false).snapshots(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return buildShimmerPost(); // Loading shimmer effect
+                }
+                if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+                  return const Center(child: Text('No posts yet.'));
+                }
+
+                var posts = snapshot.data!.docs;
+
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    var post = posts[index].data() as Map<String, dynamic>;
+                    return GroupExplorerPostCard(
+                      destination: post['destinations'][0],  // Assuming first destination
+                      budget: double.tryParse(post['budget'] ?? '0') ?? 0.0,
+                      duration: int.tryParse(post['duration'] ?? '0') ?? 0,
+                      travelers: int.tryParse(post['travelersCount'] ?? '0') ?? 0,
+                    );
+                  },
+                );
+              },
+            )
           ],
         ),
       ),

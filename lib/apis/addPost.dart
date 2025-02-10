@@ -15,6 +15,7 @@ class addPost{
   static User? user = auth.currentUser;
   static String? userId = uid;
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
   static Future<void> uploadPostToFirebase(
       String postText,
       List<Map<String, dynamic>> mediaFiles,
@@ -53,13 +54,29 @@ class addPost{
       'userId': uid,
     });
   }
- static Stream<List<Map<String, dynamic>>> fetchCommanPosts() {
+
+  static Stream<List<Map<String, dynamic>>> fetchCommanPosts() {
     return FirebaseFirestore.instance
         .collection('CommanPosts')
         .orderBy('createdAt', descending: true)
         .snapshots()
         .map((snapshot) =>
-        snapshot.docs.map((doc) => doc.data() as Map<String, dynamic>).toList());
+        snapshot.docs.map((doc) => {
+          'id': doc.id,
+          ...doc.data(),
+        }).toList());
+  }
+
+  static Stream<List<Map<String, dynamic>>> fetchTravelPosts() {
+    return FirebaseFirestore.instance
+        .collection('travel_posts')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) =>
+        snapshot.docs.map((doc) => {
+          'id': doc.id,
+          ...doc.data(),
+        }).toList());
   }
 
   static Future<String> _uploadToStorage(
@@ -75,16 +92,16 @@ class addPost{
     UploadTask uploadTask = ref.putData(fileData);
     uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
       double progress = snapshot.bytesTransferred / snapshot.totalBytes;
-      progressCallback(progress); // Callback with upload progress
+      progressCallback(progress);
     });
     await uploadTask.whenComplete(() => null);
     return await ref.getDownloadURL();
   }
+
   static Future<UserModel?> fetchUserInformation(String uid) async {
     try {
       DocumentSnapshot doc = await firestore.collection('Users').doc(uid).get();
       if (doc.exists) {
-        // Convert document to UserModel using fromJson
         return UserModel.fromJson(doc.data() as Map<String, dynamic>);
       } else {
         print('User does not exist in the database.');
@@ -95,11 +112,13 @@ class addPost{
       return null;
     }
   }
+
   static Future<List<String>> fetchPhotos() async {
     final postsSnapshot = await FirebaseFirestore.instance
         .collection('Users')
         .doc(uid)
         .collection('Posts')
+        .orderBy('createdAt', descending: true)
         .get();
     List<String> photoUrls = [];
     for (var doc in postsSnapshot.docs) {
