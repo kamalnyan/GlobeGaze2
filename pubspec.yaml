@@ -53,6 +53,7 @@ dependencies:
   flare_flutter: ^3.0.2
   photo_manager: ^3.6.4 # Downgraded dependency
   rxdart:
+  flutter_riverpod:
 
 dev_dependencies:
   flutter_test:
