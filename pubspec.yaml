@@ -67,6 +67,7 @@ flutter:
     - assets/png_jpeg_images/
     - assets/privetApi/
     - assets/sounds/
+    - assets/png_jpeg_images/user.png
 fonts:
   - family: MonaSans
     fonts:

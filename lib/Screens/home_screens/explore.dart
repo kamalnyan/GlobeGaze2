@@ -7,10 +7,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../apis/addPost.dart';
 import '../../apis/datamodel.dart';
-import '../../components/exploreComponents/postcard.dart';
 import '../../components/exploreComponents/suggestion.dart';
 import '../../components/postComponents/group_explorer_postcard.dart';
 import '../../components/postComponents/locationBottomSheet.dart';
+import '../../components/postComponents/new_post.dart';
 import '../../locationservices/locationForSUGGESATION.dart';
 import '../../themes/dark_light_switch.dart';
 
@@ -206,72 +206,6 @@ class _ExploreState extends State<Explore> {
       ),
     );
   }
-  // Widget buildShimmerCard() {
-  //   return Shimmer.fromColors(
-  //     baseColor: Colors.grey[300]!,
-  //     highlightColor: Colors.grey[100]!,
-  //     child: SingleChildScrollView(
-  //       scrollDirection: Axis.horizontal,
-  //       child: Row(
-  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-  //         children: [
-  //           Container(
-  //             width: 310,
-  //             height: 200,
-  //             margin: const EdgeInsets.all(10),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[300],
-  //               borderRadius: BorderRadius.circular(16.0),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 20),
-  //           Container(
-  //             width: 350,
-  //             height: 200,
-  //             margin: const EdgeInsets.all(10),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[300],
-  //               borderRadius: BorderRadius.circular(16.0),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 20),
-  //           Container(
-  //             width: 350,
-  //             height: 200,
-  //             margin: const EdgeInsets.all(10),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[300],
-  //               borderRadius: BorderRadius.circular(16.0),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 20),
-  //           Container(
-  //             width: 350,
-  //             height: 200,
-  //             margin: const EdgeInsets.all(10),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[300],
-  //               borderRadius: BorderRadius.circular(16.0),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 20),
-  //           Container(
-  //             width: 350,
-  //             height: 200,
-  //             margin: const EdgeInsets.all(10),
-  //             decoration: BoxDecoration(
-  //               color: Colors.grey[300],
-  //               borderRadius: BorderRadius.circular(16.0),
-  //             ),
-  //           ),
-  //           const SizedBox(width: 20),
-  //         ],
-  //       ),
-  //     ),
-  //   );
-  // }
-
-
   /// Build the suggestions section.
   /// If there is previous data, it is shown regardless of the loading state.
   Widget buildPlaceCards() {
