@@ -11,7 +11,6 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
   final mediaUrl = postData['mediaUrls'] != null && postData['mediaUrls'].isNotEmpty
       ? postData['mediaUrls'][0]
       : '';
-
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
     child: Container(

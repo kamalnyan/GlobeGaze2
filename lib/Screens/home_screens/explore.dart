@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:globegaze/themes/colors.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shimmer/shimmer.dart';
-import '../../Providers/postProviders/catchLocatingCard.dart';
-import '../../Providers/postProviders/providerCatche.dart';
 import '../../apis/addPost.dart';
 import '../../apis/datamodel.dart';
 import '../../components/exploreComponents/postcard.dart';
@@ -23,12 +21,11 @@ class Explore extends StatefulWidget {
 }
 
 class _ExploreState extends State<Explore> {
-  bool get wantKeepAlive => true;
-
-  // Your existing fields and methods remain here.
   final ValueNotifier<List<dynamic>> placesNotifier = ValueNotifier([]);
   final ValueNotifier<bool> isLoadingPlacesNotifier = ValueNotifier(true);
-  final ValueNotifier<String> locationNotifier = ValueNotifier("Fetching location...");
+  final ValueNotifier<String> locationNotifier =
+  ValueNotifier("Fetching location...");
+
   late PageController _pageController;
   int _currentPage = 0;
   Timer? _pageTimer;
@@ -67,6 +64,46 @@ class _ExploreState extends State<Explore> {
   }
 
   /// Fetch places data and update the notifiers.
+  // Future<void> fetchPlaces() async {
+  //   isLoadingPlacesNotifier.value = true;
+  //   Map<String, double>? currentloc = await getLocationBounds();
+  //   if (currentloc == null) {
+  //     isLoadingPlacesNotifier.value = false;
+  //     return;
+  //   }
+  //
+  //   try {
+  //     double lonMin = currentloc['lonMin']!;
+  //     double latMin = currentloc['latMin']!;
+  //     double lonMax = currentloc['lonMax']!;
+  //     double latMax = currentloc['latMax']!;
+  //
+  //     List<dynamic> fetchedPlaces =
+  //     await PlaceService().fetchPlaces(lonMin, latMin, lonMax, latMax);
+  //
+  //     // Debug: Print the fetched places
+  //     print("Fetched places: $fetchedPlaces");
+  //
+  //     // Sort places so that the latest ones appear first.
+  //     fetchedPlaces.sort((a, b) {
+  //       DateTime timeA =
+  //       (a['properties']['createdAt'] as Timestamp).toDate();
+  //       DateTime timeB =
+  //       (b['properties']['createdAt'] as Timestamp).toDate();
+  //       return timeB.compareTo(timeA);
+  //     });
+  //
+  //     // Only update if new data is available.
+  //     if (fetchedPlaces.isNotEmpty) {
+  //       placesNotifier.value = fetchedPlaces;
+  //     }
+  //   } catch (e) {
+  //     print('Error fetching places: $e');
+  //   } finally {
+  //     isLoadingPlacesNotifier.value = false;
+  //     _getLocation();
+  //   }
+  // }
   Future<void> fetchPlaces() async {
     isLoadingPlacesNotifier.value = true;
     Map<String, double>? currentloc = await getLocationBounds();
@@ -169,69 +206,71 @@ class _ExploreState extends State<Explore> {
       ),
     );
   }
-  Widget buildShimmerCard() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Column(
-          children: [
-            Container(
-              width: 350,
-              height: 200,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              width: 350,
-              height: 200,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              width: 350,
-              height: 200,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              width: 350,
-              height: 200,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            const SizedBox(width: 20),
-            Container(
-              width: 350,
-              height: 200,
-              margin: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.grey[300],
-                borderRadius: BorderRadius.circular(16.0),
-              ),
-            ),
-            const SizedBox(width: 20),
-          ],
-        ),
-      ),
-    );
-  }
+  // Widget buildShimmerCard() {
+  //   return Shimmer.fromColors(
+  //     baseColor: Colors.grey[300]!,
+  //     highlightColor: Colors.grey[100]!,
+  //     child: SingleChildScrollView(
+  //       scrollDirection: Axis.horizontal,
+  //       child: Row(
+  //         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  //         children: [
+  //           Container(
+  //             width: 310,
+  //             height: 200,
+  //             margin: const EdgeInsets.all(10),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[300],
+  //               borderRadius: BorderRadius.circular(16.0),
+  //             ),
+  //           ),
+  //           const SizedBox(width: 20),
+  //           Container(
+  //             width: 350,
+  //             height: 200,
+  //             margin: const EdgeInsets.all(10),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[300],
+  //               borderRadius: BorderRadius.circular(16.0),
+  //             ),
+  //           ),
+  //           const SizedBox(width: 20),
+  //           Container(
+  //             width: 350,
+  //             height: 200,
+  //             margin: const EdgeInsets.all(10),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[300],
+  //               borderRadius: BorderRadius.circular(16.0),
+  //             ),
+  //           ),
+  //           const SizedBox(width: 20),
+  //           Container(
+  //             width: 350,
+  //             height: 200,
+  //             margin: const EdgeInsets.all(10),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[300],
+  //               borderRadius: BorderRadius.circular(16.0),
+  //             ),
+  //           ),
+  //           const SizedBox(width: 20),
+  //           Container(
+  //             width: 350,
+  //             height: 200,
+  //             margin: const EdgeInsets.all(10),
+  //             decoration: BoxDecoration(
+  //               color: Colors.grey[300],
+  //               borderRadius: BorderRadius.circular(16.0),
+  //             ),
+  //           ),
+  //           const SizedBox(width: 20),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
 
   /// Build the suggestions section.
   /// If there is previous data, it is shown regardless of the loading state.
@@ -254,18 +293,21 @@ class _ExploreState extends State<Explore> {
                 String categories = place['properties']['kinds'] ?? '';
 
                 return FutureBuilder<Map<String, String>?>(
-                  future:LocationDetailsCache().getCachedLocationDetails(latitude, longitude),
-                builder: (context, snapshot) {
+                  future: getLocationDetails(latitude, longitude),
+                  builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.waiting) {
-                      return buildShimmerCard();
+                      return NonScrollableShimmerCard();
                     } else if (snapshot.hasData) {
                       Map<String, String> locationDetails = snapshot.data!;
-                      return CachedDestinationCard(
+                      return DestinationCard(
                         name: name,
-                        latitude: latitude,
-                        longitude: longitude,
+                        localty: locationDetails['locality'] ?? 'Unknown locality',
+                        Country:
+                        locationDetails['country'] ?? 'Unknown country',
                         rate: rate,
                         categories: categories,
+                        latitude: latitude,
+                        longitude: longitude,
                       );
                     } else {
                       return const SizedBox.shrink();
@@ -281,7 +323,7 @@ class _ExploreState extends State<Explore> {
             valueListenable: isLoadingPlacesNotifier,
             builder: (context, isLoading, child) {
               if (isLoading) {
-                return buildShimmerCard();
+                return  ShimmerCardScroller();
               } else {
                 return const Center(child: Text('No places to show'));
               }
@@ -299,10 +341,10 @@ class _ExploreState extends State<Explore> {
         addPost.fetchCommanPosts(),
         addPost.fetchTravelPosts(),
             (List<Map<String, dynamic>> commonPosts,
-            List<Map<String, dynamic>> travelPosts) => [commonPosts, travelPosts],
+            List<Map<String, dynamic>> travelPosts) =>
+        [commonPosts, travelPosts],
       ),
       builder: (context, snapshot) {
-        // Show shimmer until both streams have emitted data.
         if (snapshot.connectionState == ConnectionState.waiting) {
           return buildShimmerPost();
         }
@@ -314,7 +356,6 @@ class _ExploreState extends State<Explore> {
           return const Center(child: Text('No posts available'));
         }
 
-        // Combine and sort posts
         List<Map<String, dynamic>> commonPosts = snapshot.data![0];
         List<Map<String, dynamic>> travelPosts = snapshot.data![1];
         List<Map<String, dynamic>> allPosts = [...commonPosts, ...travelPosts];
@@ -325,45 +366,34 @@ class _ExploreState extends State<Explore> {
           return timeB.compareTo(timeA);
         });
 
-        // For each post, prepare a Future that returns its widget.
-        List<Future<Widget>> postFutures = allPosts.map((postData) {
-          // If this is a group post, return its widget immediately.
-          if (postData.containsKey('destinations')) {
-            return Future.value(
-              GroupExplorerPostCard(
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: allPosts.length,
+          itemBuilder: (context, index) {
+            final postData = allPosts[index];
+            if (postData.containsKey('destinations')) {
+              return GroupExplorerPostCard(
                 destination: postData['destinations'][0],
                 budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
                 duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
-                travelers: int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
-              ),
-            );
-          } else {
-            // For normal posts, use your asynchronous PostCard function.
-            return PostCard(context, postData);
-          }
-        }).toList();
-
-        // Wait for all the post widgets to be built.
-        return FutureBuilder<List<Widget>>(
-          future: Future.wait(postFutures),
-          builder: (context, postsSnapshot) {
-            // Show shimmer until all posts are ready.
-            if (postsSnapshot.connectionState == ConnectionState.waiting) {
-              return buildShimmerPost();
+                travelers:
+                int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+              );
+            } else {
+              return FutureBuilder<Widget>(
+                future: PostCard(context, postData),
+                builder: (context, postSnapshot) {
+                  if (postSnapshot.connectionState == ConnectionState.waiting) {
+                    return buildShimmerPost();
+                  }
+                  if (postSnapshot.hasError) {
+                    return const Center(child: Text('Error loading post'));
+                  }
+                  return postSnapshot.data ?? const SizedBox.shrink();
+                },
+              );
             }
-            if (postsSnapshot.hasError) {
-              return Center(child: Text('Error loading posts'));
-            }
-            List<Widget> postWidgets = postsSnapshot.data!;
-
-            return ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: postWidgets.length,
-              itemBuilder: (context, index) {
-                return postWidgets[index];
-              },
-            );
           },
         );
       },

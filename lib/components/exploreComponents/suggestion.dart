@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
+import 'package:shimmer/shimmer.dart';
 
 class DestinationCard extends StatelessWidget {
   final String name;
@@ -59,7 +61,6 @@ class DestinationCard extends StatelessWidget {
           ],
           border: Border.all(color: Colors.white.withOpacity(0.2)),
         ),
-
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,9 +117,7 @@ class DestinationCard extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 10), // Slightly reduced spacing
-
             // 🏷️ Categories
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), // Reduced vertical padding
@@ -142,7 +141,7 @@ class DestinationCard extends StatelessWidget {
 
             // 🚗 Get Directions Button (Half-width)
             Align(
-              alignment: Alignment.centerLeft,
+              alignment: Alignment.center,
               child: FractionallySizedBox(
                 widthFactor: 0.5, // 50% of the parent width
                 child: ElevatedButton.icon(
@@ -174,3 +173,254 @@ class DestinationCard extends StatelessWidget {
     );
   }
 }
+
+class ShimmerCardScroller extends StatefulWidget {
+  const ShimmerCardScroller({Key? key}) : super(key: key);
+
+  @override
+  _ShimmerCardScrollerState createState() => _ShimmerCardScrollerState();
+}
+
+class _ShimmerCardScrollerState extends State<ShimmerCardScroller> {
+  late PageController _pageController;
+  int _currentPage = 0;
+  Timer? _scrollTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(viewportFraction: 0.85);
+
+    // Auto-scroll every 3 seconds
+    _scrollTimer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+      if (_pageController.hasClients) {
+        if (_currentPage < 4) { // Adjust based on item count
+          _currentPage++;
+        } else {
+          _currentPage = 0;
+        }
+        _pageController.animateToPage(
+          _currentPage,
+          duration: const Duration(milliseconds: 800),
+          curve: Curves.easeInOut,
+        );
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    _scrollTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 220, // Set fixed height for cards
+      child: PageView.builder(
+        controller: _pageController,
+        itemCount: 5, // Number of shimmer items
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: Shimmer.fromColors(
+              baseColor: Colors.grey[300]!,
+              highlightColor: Colors.grey[100]!,
+              child: Container(
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.white.withOpacity(0.15),
+                      Colors.white.withOpacity(0.05),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                  border: Border.all(color: Colors.white.withOpacity(0.2)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Destination Name (Shimmer)
+                    Container(
+                      width: 120,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Location Row (Shimmer)
+                    Row(
+                      children: [
+                        Icon(CupertinoIcons.location_solid,
+                            size: 18, color: Colors.grey[400]),
+                        const SizedBox(width: 6),
+                        Container(
+                          width: 100,
+                          height: 14,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[400],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Category Tag (Shimmer)
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Container(
+                        width: 60,
+                        height: 14,
+                        color: Colors.grey[400],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Directions Button (Shimmer)
+                    Align(
+                      alignment: Alignment.center,
+                      child: Container(
+                        width: 100,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class NonScrollableShimmerCard extends StatelessWidget {
+  const NonScrollableShimmerCard({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 230, // Set a fixed height for the card
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Shimmer.fromColors(
+          baseColor: Colors.grey[300]!,
+          highlightColor: Colors.grey[100]!,
+          child: Container(
+            width: double.infinity,
+            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white.withOpacity(0.15),
+                  Colors.white.withOpacity(0.05),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 10),
+                ),
+              ],
+              border: Border.all(color: Colors.white.withOpacity(0.2)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Destination Name (Shimmer)
+                Container(
+                  width: 120,
+                  height: 20,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                // Location Row (Shimmer)
+                Row(
+                  children: [
+                    Icon(
+                      CupertinoIcons.location_solid,
+                      size: 18,
+                      color: Colors.grey[400],
+                    ),
+                    const SizedBox(width: 6),
+                    Container(
+                      width: 100,
+                      height: 14,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[400],
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                // Category Tag (Shimmer)
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Container(
+                    width: 60,
+                    height: 14,
+                    color: Colors.grey[400],
+                  ),
+                ),
+                const SizedBox(height: 10),
+                // Directions Button (Shimmer)
+                Align(
+                  alignment: Alignment.center,
+                  child: Container(
+                    width: 100,
+                    height: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[400],
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
