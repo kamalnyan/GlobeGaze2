@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:globegaze/Screens/home_screens/search.dart';
 import 'package:globegaze/components/postComponents/group_explorer_postcard.dart';
 import 'package:provider/provider.dart';
 import 'Providers/postProviders/imageMediaProviders.dart';

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:globegaze/Screens/home_screens/main_home.dart';
 import 'package:globegaze/themes/colors.dart';
 import 'package:intl/intl.dart';
 import '../../Screens/home_screens/explore.dart';
@@ -66,7 +67,7 @@ Widget buildCreatePostForm(
           'createdAt': FieldValue.serverTimestamp(),
         });
 
-        Navigator.of(context).pop(); // Close the form after submission
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainHome())); // Close the form after submission
       } catch (e) {
         print("Error creating post: $e");
         ScaffoldMessenger.of(context).showSnackBar(
