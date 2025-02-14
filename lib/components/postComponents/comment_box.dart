@@ -5,7 +5,7 @@ import 'package:globegaze/themes/colors.dart';
 import 'package:globegaze/themes/dark_light_switch.dart';
 import 'package:intl/intl.dart';
 
-void showCommentsBottomSheet(BuildContext context) {
+void showCommentsBottomSheet(BuildContext context, String postId) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -14,13 +14,17 @@ void showCommentsBottomSheet(BuildContext context) {
       borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
     ),
     builder: (context) {
-      return _CommentsBottomSheetContent(); // Call the inner widget
+      return _CommentsBottomSheetContent(postId: postId);
     },
   );
 }
 
 class _CommentsBottomSheetContent extends StatefulWidget {
-  // Inner widget
+  final String postId;
+
+  const _CommentsBottomSheetContent({Key? key, required this.postId})
+      : super(key: key);
+
   @override
   _CommentsBottomSheetContentState createState() =>
       _CommentsBottomSheetContentState();
@@ -34,15 +38,16 @@ class _CommentsBottomSheetContentState
   @override
   void initState() {
     super.initState();
-    commentsCollection = FirebaseFirestore.instance.collection('comments');
+
+    commentsCollection = FirebaseFirestore.instance.
+        collection('CommanPosts').doc(widget.postId).collection('comments');
   }
 
   void addComment(String text) {
     if (text.isNotEmpty) {
       commentsCollection.add({
         'username': 'You',
-        'profilePic':
-            'https://yourimageurl.com/profile.jpg', // Replace with actual URL
+        'profilePic': 'https://yourimageurl.com/profile.jpg', // Replace with actual URL
         'comment': text,
         'likes': 0,
         'liked': false,
@@ -84,8 +89,7 @@ class _CommentsBottomSheetContentState
             radius: 20,
             backgroundImage: profilePicUrl.isNotEmpty
                 ? NetworkImage(profilePicUrl)
-                : AssetImage('assets/default_avatar.png')
-                    as ImageProvider, // Default image
+                : AssetImage('assets/default_avatar.png') as ImageProvider,
           ),
           SizedBox(width: 10),
           Expanded(
@@ -104,8 +108,7 @@ class _CommentsBottomSheetContentState
                 ),
                 if (time != null)
                   Text(time,
-                      style:
-                          TextStyle(fontSize: 12, color: hintColor(context))),
+                      style: TextStyle(fontSize: 12, color: hintColor(context))),
               ],
             ),
           ),
@@ -133,7 +136,7 @@ class _CommentsBottomSheetContentState
   Widget build(BuildContext context) {
     return Padding(
       padding:
-          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.8,
         padding: EdgeInsets.all(10),
@@ -188,22 +191,22 @@ class _CommentsBottomSheetContentState
                         filled: true,
                         fillColor: isDarkMode(context)
                             ? primaryDarkBlue
-                            : neutralLightGrey.withValues(alpha: 0.6),
+                            : neutralLightGrey.withOpacity(0.6),
                         contentPadding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
                     ),
                   ),
                   ElevatedButton.icon(
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: PrimaryColor),
+                    ElevatedButton.styleFrom(backgroundColor: PrimaryColor),
                     onPressed: () => addComment(commentController.text),
                     icon: Icon(
                       CupertinoIcons.paperplane,
                       color: darkBackground,
                     ),
                     label: Text(
-                      'send',
+                      'Send',
                       style: TextStyle(color: darkBackground),
                     ),
                   ),

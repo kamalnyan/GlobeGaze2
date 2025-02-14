@@ -134,7 +134,8 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                       SizedBox(width: 20),
                       IconButton( // Wrap with IconButton
                         icon: Icon(Icons.comment, color: Colors.grey),
-                        onPressed: () => showCommentsBottomSheet(context), // Call function
+                        onPressed: () => showCommentsBottomSheet(context, postData['postId']),
+                         // Call function
                       ),
                       SizedBox(width: 5),
                       Text('26,376', style: TextStyle(color: hintColor(context))),

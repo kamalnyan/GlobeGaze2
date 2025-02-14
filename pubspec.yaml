@@ -54,6 +54,7 @@ dependencies:
   photo_manager: ^3.6.4 # Downgraded dependency
   rxdart:
   flutter_riverpod:
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

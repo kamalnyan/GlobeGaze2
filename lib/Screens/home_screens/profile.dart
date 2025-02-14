@@ -138,6 +138,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   showAboutUsDialog(context);
                 },
               ),
+              ListTile(
+                leading: const FaIcon(
+                  CupertinoIcons.power,
+                  color: Colors.red,
+                ),
+                title: Text('Log out',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  Navigator.pop(context);
+                  handleLogout(context);
+                },
+              ),
+
             ],
           ),
         ),

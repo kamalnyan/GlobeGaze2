@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 import '../firebase/usermodel/usermodel.dart';
 
@@ -22,6 +23,7 @@ class addPost{
       String? location,
       {required void Function(double) onProgress}
       ) async {
+    String postId = const Uuid().v4();
     List<String> mediaUrls = [];
     double totalFiles = mediaFiles.length.toDouble();
     double uploadedFiles = 0.0;
@@ -46,12 +48,13 @@ class addPost{
       'location': location,
       'createdAt': Timestamp.now(),
     });
-    await FirebaseFirestore.instance.collection('CommanPosts').add({
+    await FirebaseFirestore.instance.collection('CommanPosts').doc(postId,).set({
       'text': postText,
       'mediaUrls': mediaUrls,
       'location': location,
       'createdAt': Timestamp.now(),
       'userId': uid,
+      'postId':postId,
     });
   }
 
