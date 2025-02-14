@@ -2,6 +2,8 @@ import 'dart:developer';
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/components/isDarkMode.dart';
+import 'package:globegaze/themes/colors.dart';
 import 'package:provider/provider.dart';
 import 'package:location/location.dart' as loc;
 import 'package:http/http.dart' as http;
@@ -19,6 +21,7 @@ void showLocationBottomSheet(BuildContext context) {
   });
 
   showModalBottomSheet(
+    backgroundColor: isDarkMode(context)?darkBackground:neutralLightGrey.withValues(alpha: 0.6),
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
@@ -37,24 +40,24 @@ void showLocationBottomSheet(BuildContext context) {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const Center(
+               Center(
                 child: Text(
                   'Choose a Location',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: textColor(context)
                   ),
                 ),
               ),
               const SizedBox(height: 16),
               CupertinoSearchTextField(
                 enableIMEPersonalizedLearning: true,
-                style: const TextStyle(color: Colors.grey),
+                style:  TextStyle(color: hintColor(context)),
                 placeholder: 'Search for a location',
                 onChanged: (query) async {
                   if (query.isNotEmpty) {
-                    List<Map<String, String>> results = await fetchLocationSuggestions(query);
-                    searchResultsNotifier.value = results;
+                    List<Map<String, String>> results = await fetchLocationSuggestions(query);searchResultsNotifier.value = results;
                   } else {
                     searchResultsNotifier.value = [];
                   }
@@ -69,8 +72,8 @@ void showLocationBottomSheet(BuildContext context) {
                   } else {
                     return ListTile(
                       leading: Icon(CupertinoIcons.location_solid, color: Colors.blue),
-                      title: Text('Current Location'),
-                      subtitle: Text('${locationData['locality']}, ${locationData['country']}'),
+                      title: Text('Current Location',style: TextStyle(color: textColor(context)),),
+                      subtitle: Text('${locationData['locality']}, ${locationData['country']}',style: TextStyle(color: hintColor(context)),),
                       onTap: () {
                         selectedLocation = '${locationData['locality']}, ${locationData['country']}';
                         locationProvider.setSelectedLocation(selectedLocation);

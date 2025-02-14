@@ -38,6 +38,7 @@ void showEditProfileBottomSheet(
   aboutController.addListener(checkForChanges);
 
   showModalBottomSheet(
+    backgroundColor: isDarkMode(context)?darkBackground:Colors.white,
     context: context,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(
@@ -46,7 +47,7 @@ void showEditProfileBottomSheet(
     builder: (context) {
       return Padding(
         padding: EdgeInsets.only(
-          bottom: MediaQuery.of(context).viewInsets.bottom, // Adjust for keyboard
+          bottom: MediaQuery.of(context).viewInsets.bottom,
           left: 16,
           right: 16,
           top: 16,
@@ -57,12 +58,13 @@ void showEditProfileBottomSheet(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Center(
+               Center(
                 child: Text(
                   'Edit Profile',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    color: textColor(context),
                   ),
                 ),
               ),
@@ -110,12 +112,15 @@ void showEditProfileBottomSheet(
               ValueListenableBuilder<bool>(
                 valueListenable: hasChanges,
                 builder: (context, value, child) {
-                  return SizedBox(
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
+                      borderRadius: BorderRadius.circular(20.0)
+                    ),
                     width: 200,
                     height: 45,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: PrimaryColor,
                         side: BorderSide.none,
                         shape: const StadiumBorder(),
                       ),
@@ -150,10 +155,10 @@ void showEditProfileBottomSheet(
                         }
                         Navigator.pop(context);
                       } : null,
-                      child: const Center(
+                      child:  Center(
                         child: Text(
                           'Save Changes',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: textColor(context)),
                         ),
                       ),
                     ),

@@ -182,11 +182,13 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/components/isDarkMode.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:provider/provider.dart';
 
 import '../../Providers/postProviders/imageMediaProviders.dart';
 import '../../Screens/home_screens/explore.dart';
+import '../../themes/colors.dart';
 import 'locationBottomSheet.dart';
 
 Widget buildStandardPost(
@@ -279,13 +281,21 @@ Widget buildStandardPost(
     children: [
       Padding(
         padding: const EdgeInsets.all(16.0),
-        child: TextField(
-          controller: postController,
-          maxLines: null,
-          keyboardType: TextInputType.multiline,
-          decoration: const InputDecoration(
-            hintText: "How was your experience?",
-            border: InputBorder.none,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15.0,vertical: 5.0),
+          decoration: BoxDecoration(
+            color: isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
+            borderRadius: BorderRadius.all(Radius.circular(20.0)),
+          ),
+          child: TextField(
+            controller: postController,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            decoration:  InputDecoration(
+              hintText: "How was your experience?",
+              border: InputBorder.none,
+                hintStyle: TextStyle(color: hintColor(context)),
+            ),
           ),
         ),
       ),
@@ -296,31 +306,31 @@ Widget buildStandardPost(
           children: [
             IconButton(
               onPressed: () => pickMedia(),
-              icon: const Column(
+              icon:  Column(
                 children: [
-                  Icon(CupertinoIcons.photo),
+                  Icon(CupertinoIcons.photo,color: textColor(context),),
                   SizedBox(height: 5),
-                  Text('Gallery'),
+                  Text('Gallery',style: TextStyle(color: hintColor(context)),),
                 ],
               ),
             ),
             IconButton(
               onPressed: () => showLocationBottomSheet(context),
-              icon: const Column(
+              icon:  Column(
                 children: [
-                  Icon(CupertinoIcons.location),
+                  Icon(CupertinoIcons.location,color: textColor(context),),
                   SizedBox(height: 5),
-                  Text('Location'),
+                  Text('Location',style: TextStyle(color: hintColor(context),),),
                 ],
               ),
             ),
             IconButton(
               onPressed: () => showDraftListDialog(),
-              icon: const Column(
+              icon:  Column(
                 children: [
-                  Icon(CupertinoIcons.collections),
+                  Icon(CupertinoIcons.collections,color: textColor(context),),
                   SizedBox(height: 5),
-                  Text('Saved drafts'),
+                  Text('Saved drafts',style: TextStyle(color: hintColor(context),),),
                 ],
               ),
             ),

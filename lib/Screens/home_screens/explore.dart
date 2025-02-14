@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:globegaze/themes/colors.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../apis/addPost.dart';
@@ -12,6 +11,7 @@ import '../../components/postComponents/group_explorer_postcard.dart';
 import '../../components/postComponents/locationBottomSheet.dart';
 import '../../components/postComponents/new_post.dart';
 import '../../locationservices/locationForSUGGESATION.dart';
+import '../../themes/colors.dart';
 import '../../themes/dark_light_switch.dart';
 
 class Explore extends StatefulWidget {
@@ -336,11 +336,7 @@ class _ExploreState extends State<Explore> {
 
   @override
   Widget build(BuildContext context) {
-    bool isDarkMode =
-        MediaQuery.of(context).platformBrightness == Brightness.dark;
-
     return Scaffold(
-      backgroundColor: darkLight(isDarkMode),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -354,10 +350,10 @@ class _ExploreState extends State<Explore> {
                 child: buildPlaceCards(),
               ),
             ),
-            const Padding(
+             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0),
               child: Text('Posts',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: textColor(context))),
             ),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),

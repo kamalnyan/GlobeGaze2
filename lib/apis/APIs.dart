@@ -8,12 +8,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:globegaze/encrypt_decrypt/endrypt.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
+import '../Screens/login_signup_screens/login_with_email_and_passsword.dart';
 import '../components/chatComponents/Chatusermodel.dart';
 import '../components/chatComponents/messegemodel.dart';
 import '../components/dilog.dart';
+import '../firebase/login_signup_methods/AuthService.dart';
 import 'PushNotifaction.dart';
 final AudioPlayer _audioPlayer = AudioPlayer();
 class Apis {
@@ -24,6 +27,104 @@ class Apis {
   static User? user = auth.currentUser;
   static String? userId = uid;
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+  static Future<void> deleteUserAccount(BuildContext context, String pass) async {
+    try {
+      if (user != null) {
+        try {
+          final credential = EmailAuthProvider.credential(
+            email: user!.email!,
+            password: pass,
+          );
+          await user!
+              .reauthenticateWithCredential(credential)
+              .then((result) async {
+            // await deleteUserData(context, true);
+            await user!.delete();
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Successfully deleted account'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            ).closed.then((_) {
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => Login()),
+                    (Route<dynamic> route) => false,
+              );
+            });
+          }).catchError((error) {
+            handleAuthErrors(context, error);
+          });
+        } catch (e) {
+          handleAuthErrors(context, e);
+        }
+      } else {
+        throw Exception('No user is currently signed in.');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to delete user account: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  static void handleAuthErrors(BuildContext context, Object error) {
+    String errorMessage;
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'wrong-password':
+          errorMessage = 'The password is incorrect.';
+          break;
+        case 'user-mismatch':
+          errorMessage = 'The provided credentials do not match the signed-in user.';
+          break;
+        case 'user-not-found':
+          errorMessage = 'No user found for the given email.';
+          break;
+        case 'too-many-requests':
+          errorMessage = 'Too many attempts. Please try again later.';
+          break;
+        default:
+          errorMessage = 'Authentication failed: ${error.message}';
+      }
+    } else {
+      errorMessage = 'An unknown error occurred: $error';
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(errorMessage),
+        backgroundColor: Colors.red,
+      ),
+    );
+  }
+  static Future<void> changePassword(BuildContext context, String newPassword, String oldPassword) async {
+    try {
+      if (user== null) {
+        throw Exception('No user is currently signed in.');
+      }
+      AuthCredential credential = EmailAuthProvider.credential(
+        email: me.email,
+        password: oldPassword,
+      );
+      await user?.reauthenticateWithCredential(credential);
+      await user?.updatePassword(newPassword);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Password changed successfully'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to change password: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
   // Getting All user data for Searching
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsersindata(BuildContext context) {
     if (userId == null) {

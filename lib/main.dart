@@ -8,6 +8,7 @@ import 'package:flutter_notification_channel/flutter_notification_channel.dart';
 import 'package:flutter_notification_channel/notification_importance.dart';
 import 'package:globegaze/Screens/home_screens/search.dart';
 import 'package:globegaze/components/postComponents/group_explorer_postcard.dart';
+import 'package:globegaze/themes/appTheme.dart';
 import 'package:provider/provider.dart';
 import 'Providers/postProviders/imageMediaProviders.dart';
 import 'Providers/postProviders/locationProvider.dart';
@@ -73,15 +74,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Globe Gaze',
       debugShowCheckedModeBanner: false,
-      themeMode: ThemeMode.system, // Automatically switch based on system theme
-      theme: ThemeData(
-        brightness: Brightness.light,
-        primaryColor: Colors.white,
-      ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: Colors.black,
-      ),
+      darkTheme: darkTheme,
+      theme: lightTheme,
+      themeMode: ThemeMode.system,
       home:  MyHomePage(),
       // home: Postcard(),
     );

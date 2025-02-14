@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:globegaze/themes/colors.dart';
 
+import '../../themes/dark_light_switch.dart';
+
 class GroupExplorerPostCard extends StatelessWidget {
   final String destination;
   final double budget;
@@ -20,11 +22,11 @@ class GroupExplorerPostCard extends StatelessWidget {
     return SizedBox(
       height: 250,
       child: Card(
-        color: const Color(0xff3b3b3b),
+        color: isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20),
         ),
-        elevation: 5,
+        elevation: 0,
         margin: const EdgeInsets.all(16),
         child: Padding(
           padding: const EdgeInsets.all(23),
@@ -36,9 +38,10 @@ class GroupExplorerPostCard extends StatelessWidget {
                 children: [
                   Text(
                     destination,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
+                        color: textColor(context)
                     ),
                   ),
                   const Icon(Icons.location_on, color: PrimaryColor),
@@ -50,15 +53,15 @@ class GroupExplorerPostCard extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildInfoTile(Icons.attach_money, 'Budget', '\$${budget.toStringAsFixed(2)}'),
-                  _buildInfoTile(Icons.calendar_today, 'Duration', '$duration Days'),
+                  _buildInfoTile(context,Icons.attach_money, 'Budget', '\$${budget.toStringAsFixed(2)}'),
+                  _buildInfoTile(context,Icons.calendar_today, 'Duration', '$duration Days'),
                 ],
               ),
               const SizedBox(height: 15),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildInfoTile(Icons.group, 'Travelers', '$travelers People'),
+                  _buildInfoTile(context,Icons.group, 'Travelers', '$travelers People'),
                 ],
               ),
             ],
@@ -68,7 +71,7 @@ class GroupExplorerPostCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoTile(IconData icon, String label, String value) {
+  Widget _buildInfoTile(BuildContext context,IconData icon, String label, String value) {
     return Row(
       children: [
         Icon(icon, color: PrimaryColor),
@@ -76,8 +79,8 @@ class GroupExplorerPostCard extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.grey)),
-            Text(value, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            Text(label, style:  TextStyle(fontWeight: FontWeight.w500, color: textColor(context))),
+            Text(value, style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: hintColor(context))),
           ],
         ),
       ],

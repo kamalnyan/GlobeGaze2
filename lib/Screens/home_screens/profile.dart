@@ -3,13 +3,17 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../apis/APIs.dart';
 import '../../components/LoadingAnimation.dart';
+import '../../components/isDarkMode.dart';
 import '../../components/profile/drawer.dart';
+import '../../components/profile/drawerfunctions.dart';
 import '../../components/profile/editprofile.dart';
 import '../../components/profile/profileGrid.dart';
 import '../../themes/colors.dart';
+import '../login_signup_screens/deleteAccount.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -31,12 +35,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(username),
+        backgroundColor: isDarkMode(context)?darkBackground:Colors.white,
+        title: Text(username,style: TextStyle(color: textColor(context)),),
         actions: [
           Builder(
             builder: (context) {
               return IconButton(
-                icon: const Icon(CupertinoIcons.line_horizontal_3),
+                icon:  Icon(CupertinoIcons.line_horizontal_3,color: textColor(context),),
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
                 },
@@ -46,48 +51,95 @@ class _ProfilePageState extends State<ProfilePage> {
         ],
       ),
       endDrawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            const DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Settings',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
+        child: Container(
+          color: isDarkMode(context) ? darkBackground : Colors.white,
+          padding: const EdgeInsets.only(top: 40.0),
+          child: ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              ListTile(
+                leading: const Icon(
+                  CupertinoIcons.lock,
+                  color: PrimaryColor,
                 ),
+                title: Text('Change password',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  handleForget(context);
+                },
               ),
-            ),
-            ProfileMenuWidget(
-              title: "Profile",
-              icon: CupertinoIcons.profile_circled,
-              onPress: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProfilePage()), // Navigate to Profile Page
-                );
-              },
-            ),
-            ProfileMenuWidget(
-              title: "Settings",
-              icon: CupertinoIcons.settings,
-              onPress: () {
-                // Navigate to settings page if needed
-              },
-            ),
-            ProfileMenuWidget(
-              title: "Logout",
-              icon: CupertinoIcons.square_arrow_left,
-              textColor: Colors.red,
-              endIcon: false,
-              onPress: () {
-                showLogoutDialog(context);
-              },
-            ),
-          ],
+              ListTile(
+                leading: const Icon(
+                  CupertinoIcons.trash,
+                  color: Colors.red,
+                ),
+                title: Text('Delete data',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  Navigator.pop(context);
+                  confirmAndDelete(
+                      context,
+                      "Delete Data",
+                      "Are you sure you want to permanently delete your data?",
+                      "Delete Permanently", () {
+                    // UserService.deleteUserData(context, false);
+                  });
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  CupertinoIcons.trash_slash_fill,
+                  color: Colors.red,
+                ),
+                title: Text('Delete account',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DeleteAccount()));
+                },
+              ),
+              ListTile(
+                leading: const Icon(
+                  CupertinoIcons.question_circle_fill,
+                  color: PrimaryColor,
+                ),
+                title: Text('FAQ',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  // Navigator.push(context, MaterialPageRoute(builder: (context) =>  FAQScreen()));
+                },
+              ),
+              ListTile(
+                leading: const FaIcon(
+                  FontAwesomeIcons.faceSmile,
+                  color: PrimaryColor,
+                ),
+                title: Text('Feedback',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  Navigator.pop(context);
+                  collectFeedbackAndSend(
+                      context,
+                      "Feedback Form",
+                      "We value your feedback! Please share your thoughts below.",
+                      "Send Feedback",
+                      Apis.me.name
+                  );
+                },
+              ),
+              ListTile(
+                leading: const FaIcon(
+                  FontAwesomeIcons.code,
+                  color: PrimaryColor,
+                ),
+                title: Text('About us',
+                    style: TextStyle(color: textColor(context))),
+                onTap: () {
+                  Navigator.pop(context);
+                  showAboutUsDialog(context);
+                },
+              ),
+            ],
+          ),
         ),
       ),
       body: Stack(
@@ -159,8 +211,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  Text(fullName),
-                  Text(about),
+                  Text(fullName,style: TextStyle(color: textColor(context)),),
+                  Text(about,style: TextStyle(color: hintColor(context)),),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     onPressed: () {

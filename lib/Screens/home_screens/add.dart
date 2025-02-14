@@ -14,6 +14,7 @@ import '../../Providers/postProviders/imageMediaProviders.dart';
 import '../../Providers/postProviders/locationProvider.dart';
 import '../../apis/APIs.dart';
 import '../../apis/addPost.dart';
+import '../../components/isDarkMode.dart';
 import '../../components/postComponents/groupExplorer.dart';
 import '../../components/postComponents/standrdPost.dart';
 import '../../themes/colors.dart';
@@ -197,7 +198,8 @@ class _AddPageState extends State<AddPage> {
         child: Scaffold(
           resizeToAvoidBottomInset: true,
           appBar: AppBar(
-            title: const Text('Create Post'),
+            backgroundColor: isDarkMode(context)?darkBackground:Colors.white,
+            title:  Text('Create Post',style: TextStyle(color: textColor(context)),),
             actions: [
               TextButton(
                 onPressed: _handlePost,
@@ -420,9 +422,9 @@ class _AddPageState extends State<AddPage> {
                   setState(() => _isToggled = value);
                 },
               ),
-              const Text(
+               Text(
                 'Group Explorer',
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500,color: hintColor(context)),
               )
             ],
           ),

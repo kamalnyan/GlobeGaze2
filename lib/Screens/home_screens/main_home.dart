@@ -89,7 +89,7 @@ class _MainHomeState extends State<MainHome> {
     switch (pageIndex) {
       case 0:
         return AppBar(
-          backgroundColor: darkLight(isDarkMode),
+          backgroundColor: isDarkMode?darkBackground:Colors.white,
           title: RichText(
             text: TextSpan(
               style: TextStyle(
@@ -111,13 +111,13 @@ class _MainHomeState extends State<MainHome> {
           ),
           actions: [
             IconButton(
-              icon: Icon(CupertinoIcons.bell),
+              icon: Icon(CupertinoIcons.bell,color: textColor(context),),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>Notifactions(userId: userId!,)));
               },
             ),
             IconButton(
-              icon: Icon(FontAwesomeIcons.facebookMessenger),
+              icon: Icon(FontAwesomeIcons.facebookMessenger,color: textColor(context),),
               onPressed: () {
                 Navigator.push(context,
                     MaterialPageRoute(builder: (context) => ChatList()));
@@ -132,11 +132,11 @@ class _MainHomeState extends State<MainHome> {
         return null;
       case 3:
         return AppBar(
-          backgroundColor: darkLight(isDarkMode),
-          title: const Text("My Trips"),
+          backgroundColor: isDarkMode?darkBackground:Colors.white,
+          title:  Text("My Trips",style: TextStyle(color: textColor(context)),),
           actions: [
             IconButton(
-              icon: const Icon(Icons.add_circle),
+              icon:  Icon(Icons.add_circle,color: textColor(context),),
               onPressed: () {
                 // Action to add a new trip
               },

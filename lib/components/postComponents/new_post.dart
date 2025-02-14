@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../apis/addPost.dart';
 import '../../firebase/usermodel/usermodel.dart';
+import '../../themes/colors.dart';
 import '../mydate.dart';
 
 Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) async {
@@ -35,17 +36,17 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
           ),
           title: Text(
             user?.fullName ?? 'Unknown User',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style:  TextStyle(fontWeight: FontWeight.bold,color: textColor(context)),
           ),
-          subtitle: Text(MyDateUtil.timeAgo(Timestamp.fromDate(createdAt))),
+          subtitle: Text(MyDateUtil.timeAgo(Timestamp.fromDate(createdAt)),style: TextStyle(color: hintColor(context)),),
 
   trailing: Container(
-            padding: const EdgeInsets.all(2),
+            padding: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              border: Border.all(color: Colors.black, width: 1.5),
+              border: Border.all(color: PrimaryColor, width: 1.5),
             ),
-            child: const Icon(FontAwesomeIcons.ellipsis, color: Colors.black, size: 13),
+            child:  Icon(FontAwesomeIcons.ellipsis, color: textColor(context), size: 13),
           ),
         ),
 
@@ -127,12 +128,12 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
               Row(
                 children: [
                   Row(
-                    children: const [
+                    children:  [
                       Icon(Icons.favorite, color: Colors.red),
                       SizedBox(width: 20),
                       Icon(Icons.comment, color: Colors.grey),
                       SizedBox(width: 5),
-                      Text('26,376'),
+                      Text('26,376',style: TextStyle(color: hintColor(context)),),
                     ],
                   ),
                   const Spacer(),
@@ -143,8 +144,8 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('liked by ${user?.fullName ?? 'Unknown User'} and 244,389',style: TextStyle(fontWeight: FontWeight.bold)),
-                  Text('kamal : waah kya baat haii',style: TextStyle(fontWeight: FontWeight.bold)),
+                  Text('liked by ${user?.fullName ?? 'Unknown User'} and 244,389',style: TextStyle(fontWeight: FontWeight.bold,color: textColor(context))),
+                  Text('kamal : waah kya baat haii',style: TextStyle(fontWeight: FontWeight.bold,color: hintColor(context))),
                 ],
               ),
             ],

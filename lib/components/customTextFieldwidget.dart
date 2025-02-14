@@ -21,7 +21,7 @@ Widget buildProfileTextField(BuildContext context, {
           height: 40,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(100),
-            color: PrimaryColor.withOpacity(0.1),
+            color:isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
           ),
           child: Icon(icon, color: PrimaryColor),
         ),
@@ -30,22 +30,26 @@ Widget buildProfileTextField(BuildContext context, {
         child: Container(
           height: 50,
           decoration: BoxDecoration(
-            color:isDarkMode(context)? Color(0xFF343434):Color(0xFF888888),
+            color:isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
             borderRadius: BorderRadius.circular(22.0),
           ),
           child: CupertinoTextField(
             controller: controller,
             placeholder: placeholder,
+            placeholderStyle: TextStyle(
+              color: hintColor(context), // Change this to your desired hint color
+              fontSize: 16,
+            ),
             cursorColor: PrimaryColor,
             style: TextStyle(
-              color: isDarkMode(context) ? Colors.white : Colors.black,
+              color: textColor(context), // This controls the entered text color
               decoration: TextDecoration.none,
             ),
             decoration: null,
             maxLines: 1,
           ),
         ),
-      ),
+      )
     ],
   );
 }

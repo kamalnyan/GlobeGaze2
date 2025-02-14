@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/components/isDarkMode.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import 'package:shimmer/shimmer.dart';
+
+import '../../themes/colors.dart';
 
 class DestinationCard extends StatelessWidget {
   final String name;
@@ -41,41 +44,41 @@ class DestinationCard extends StatelessWidget {
       child: Container(
         width: double.infinity,
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Adjusted margin
-        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8), // Reduced bottom padding
+        padding: const EdgeInsets.fromLTRB(17, 17, 17, 8), // Reduced bottom padding
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Colors.white.withOpacity(0.15),
-              Colors.white.withOpacity(0.05),
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
+          color: isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
+          // gradient: LinearGradient(
+          //   colors: [
+          //     neutralLightGrey.withValues(alpha: 0.5),
+          //     Colors.white.withValues(alpha:0.7),
+          //   ],
+          //   begin: Alignment.topLeft,
+          //   end: Alignment.bottomRight,
+          // ),
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 20,
-              offset: const Offset(0, 10),
-            ),
-          ],
-          border: Border.all(color: Colors.white.withOpacity(0.2)),
+          // boxShadow: [
+          //   BoxShadow(
+          //     color: Colors.black.withValues(alpha:0.1),
+          //     blurRadius: 20,
+          //     offset: const Offset(0, 10),
+          //   ),
+          // ],
+          border: Border.all(color: Colors.white.withValues(alpha:0.2)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 🌍 Destination Name & Rating
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   child: Text(
                     name,
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: textColor(context),
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -107,9 +110,9 @@ class DestinationCard extends StatelessWidget {
                 Expanded(
                   child: Text(
                     '$localty, $Country',
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontSize: 14,
-                      color: Colors.white70,
+                      color: hintColor(context),
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
@@ -122,14 +125,14 @@ class DestinationCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), // Reduced vertical padding
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: hintColor(context).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 categories.split(',')[0],
-                style: const TextStyle(
+                style:  TextStyle(
                   fontSize: 14,
-                  color: Colors.white,
+                  color: textColor(context),
                   fontWeight: FontWeight.w500,
                 ),
                 overflow: TextOverflow.ellipsis,
