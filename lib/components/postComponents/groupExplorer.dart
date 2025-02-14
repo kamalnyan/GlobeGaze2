@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:globegaze/Screens/home_screens/main_home.dart';
-import 'package:globegaze/themes/colors.dart';
 import 'package:intl/intl.dart';
-import '../../Screens/home_screens/explore.dart';
+import '../../themes/colors.dart';
 import '../customTextFieldwidget.dart';
 
 Widget buildCreatePostForm(

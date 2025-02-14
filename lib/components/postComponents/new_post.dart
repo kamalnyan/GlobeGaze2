@@ -7,6 +7,7 @@ import '../../apis/addPost.dart';
 import '../../firebase/usermodel/usermodel.dart';
 import '../../themes/colors.dart';
 import '../mydate.dart';
+import 'comment_box.dart';
 
 Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) async {
   UserModel? user = await addPost.fetchUserInformation(postData['userId']);
@@ -128,12 +129,15 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
               Row(
                 children: [
                   Row(
-                    children:  [
+                    children: [
                       Icon(Icons.favorite, color: Colors.red),
                       SizedBox(width: 20),
-                      Icon(Icons.comment, color: Colors.grey),
+                      IconButton( // Wrap with IconButton
+                        icon: Icon(Icons.comment, color: Colors.grey),
+                        onPressed: () => showCommentsBottomSheet(context), // Call function
+                      ),
                       SizedBox(width: 5),
-                      Text('26,376',style: TextStyle(color: hintColor(context)),),
+                      Text('26,376', style: TextStyle(color: hintColor(context))),
                     ],
                   ),
                   const Spacer(),
