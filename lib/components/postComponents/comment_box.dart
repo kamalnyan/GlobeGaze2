@@ -5,6 +5,8 @@ import 'package:globegaze/themes/colors.dart';
 import 'package:globegaze/themes/dark_light_switch.dart';
 import 'package:intl/intl.dart';
 
+import '../../apis/APIs.dart';
+
 void showCommentsBottomSheet(BuildContext context, String postId) {
   showModalBottomSheet(
     context: context,
@@ -38,7 +40,6 @@ class _CommentsBottomSheetContentState
   @override
   void initState() {
     super.initState();
-
     commentsCollection = FirebaseFirestore.instance.
         collection('CommanPosts').doc(widget.postId).collection('comments');
   }
@@ -46,11 +47,13 @@ class _CommentsBottomSheetContentState
   void addComment(String text) {
     if (text.isNotEmpty) {
       commentsCollection.add({
-        'username': 'You',
-        'profilePic': 'https://yourimageurl.com/profile.jpg', // Replace with actual URL
+        'username': Apis.me.username,
+        'profilePic': Apis.me.image,
         'comment': text,
         'likes': 0,
         'liked': false,
+        'postId': widget.postId,
+        'uid':Apis.me.id,
         'timestamp': FieldValue.serverTimestamp(),
       });
       commentController.clear();
