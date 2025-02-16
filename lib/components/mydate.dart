@@ -9,7 +9,13 @@ class MyDateUtil {
     final date = DateTime.fromMillisecondsSinceEpoch(int.parse(time));
     return TimeOfDay.fromDateTime(date).format(context);
   }
-
+  static String getFormattedTimeStamp({
+    required BuildContext context,
+    required Timestamp timestamp,
+  }) {
+    final date = timestamp.toDate();
+    return TimeOfDay.fromDateTime(date).format(context);
+  }
   // for getting formatted time for sent & read
   static String getMessageTime(
       {required BuildContext context, required String time}) {

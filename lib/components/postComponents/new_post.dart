@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -41,14 +42,7 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
           ),
           subtitle: Text(MyDateUtil.timeAgo(Timestamp.fromDate(createdAt)),style: TextStyle(color: hintColor(context)),),
 
-  trailing: Container(
-            padding: const EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: PrimaryColor, width: 1.5),
-            ),
-            child:  Icon(FontAwesomeIcons.ellipsis, color: textColor(context), size: 13),
-          ),
+  trailing: Icon(CupertinoIcons.ellipsis_vertical_circle_fill, color: textColor(context)),
         ),
 
         // Image Section with PageView
@@ -133,7 +127,7 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                       Icon(Icons.favorite, color: Colors.red),
                       SizedBox(width: 20),
                       IconButton( // Wrap with IconButton
-                        icon: Icon(Icons.comment, color: Colors.grey),
+                        icon: Icon(CupertinoIcons.chat_bubble, color: Colors.grey),
                         onPressed: () => showCommentsBottomSheet(context, postData['postId']),
                          // Call function
                       ),
@@ -142,7 +136,7 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                     ],
                   ),
                   const Spacer(),
-                  const Icon(Icons.bookmark_border, color: Colors.white),
+                  const Icon(CupertinoIcons.star_circle, color: Colors.white),
                 ],
               ),
               SizedBox(height: 5),

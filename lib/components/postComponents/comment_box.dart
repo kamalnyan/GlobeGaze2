@@ -191,12 +191,13 @@ class _CommentsBottomSheetContentState
                         filled: true,
                         fillColor: isDarkMode(context)
                             ? primaryDarkBlue
-                            : neutralLightGrey.withOpacity(0.6),
+                            : neutralLightGrey.withValues(alpha: 0.6),
                         contentPadding:
                         EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
                     ),
                   ),
+                  const SizedBox(width: 10,),
                   ElevatedButton.icon(
                     style:
                     ElevatedButton.styleFrom(backgroundColor: PrimaryColor),

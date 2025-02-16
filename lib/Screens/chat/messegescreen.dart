@@ -26,10 +26,28 @@ class Messegescreen extends StatefulWidget {
   State<Messegescreen> createState() => _MessegescreenState();
 }
 
-class _MessegescreenState extends State<Messegescreen> {
+class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserver {
   List<Message> _list = [];
   final _msgcontroller = TextEditingController();
   bool _showemoji = false, _isUploading = false;
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+     Apis.updateActiveStatus(false);
+    } else if (state == AppLifecycleState.resumed) {
+      Apis.updateActiveStatus(true);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +55,17 @@ class _MessegescreenState extends State<Messegescreen> {
       onTap: () {
         FocusScope.of(context).unfocus();
       },
-      child: WillPopScope(
-        onWillPop: () async {
-          if (_showemoji) {
+      child:PopScope(
+        // Determine in advance if the route should be allowed to pop.
+        canPop: !_showemoji,
+        onPopInvokedWithResult: (bool didPop, Object? result) async {
+          if (!didPop && _showemoji) {
             setState(() {
               _showemoji = false;
             });
-            return false;
-          } else {
-            return true;
           }
+          // Otherwise, if the pop occurred successfully (didPop == true),
+          // you can run additional logic if needed.
         },
         child: Scaffold(
           backgroundColor:
@@ -374,4 +393,5 @@ class _MessegescreenState extends State<Messegescreen> {
       ),
     );
   }
+
 }

@@ -308,6 +308,8 @@ class _ExploreState extends State<Explore> {
             final postData = allPosts[index];
             if (postData.containsKey('destinations')) {
               return GroupExplorerPostCard(
+                genderPreference:postData['genderPreference'] ,
+                time: postData['createdAt'],
                 destination: postData['destinations'][0],
                 budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
                 duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
