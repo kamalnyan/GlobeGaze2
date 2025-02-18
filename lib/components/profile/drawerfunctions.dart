@@ -369,6 +369,7 @@ Future<void>  handleLogout(BuildContext context) async {
         MaterialPageRoute(builder: (context) => Login()),
             (Route<dynamic> route) => false,
       );
+      await Apis.updateActiveStatus(false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${capitalizeWords(Apis.me.name)} Logged Out',style: const TextStyle(color: Colors.green),) , backgroundColor: primaryDarkBlue,),
       );

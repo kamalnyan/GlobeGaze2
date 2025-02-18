@@ -26,29 +26,10 @@ class Messegescreen extends StatefulWidget {
   State<Messegescreen> createState() => _MessegescreenState();
 }
 
-class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserver {
+class _MessegescreenState extends State<Messegescreen>{
   List<Message> _list = [];
   final _msgcontroller = TextEditingController();
   bool _showemoji = false, _isUploading = false;
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addObserver(this);
-  }
-
-  @override
-  void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
-    super.dispose();
-  }
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused) {
-     Apis.updateActiveStatus(false);
-    } else if (state == AppLifecycleState.resumed) {
-      Apis.updateActiveStatus(true);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -56,7 +37,6 @@ class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserv
         FocusScope.of(context).unfocus();
       },
       child:PopScope(
-        // Determine in advance if the route should be allowed to pop.
         canPop: !_showemoji,
         onPopInvokedWithResult: (bool didPop, Object? result) async {
           if (!didPop && _showemoji) {
@@ -64,15 +44,11 @@ class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserv
               _showemoji = false;
             });
           }
-          // Otherwise, if the pop occurred successfully (didPop == true),
-          // you can run additional logic if needed.
         },
         child: Scaffold(
-          backgroundColor:
-              isDarkMode(context) ? Colors.black : ChatBack, // Dark background.
           appBar: AppBar(
-            backgroundColor:
-                isDarkMode(context) ? Color(0xFF1E1E2A) : Colors.white,
+            backgroundColor:  isDarkMode(context)
+                ?darkBackground:Colors.white,
             elevation: 0,
             leading: IconButton(
               icon: Icon(CupertinoIcons.back,
@@ -92,7 +68,7 @@ class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserv
                       const CircleAvatar(
                         radius: 22,
                         backgroundImage: AssetImage(
-                            'assets/png_jpeg_images/user.png'), // User profile image
+                            'assets/png_jpeg_images/user.jpg'), // User profile image
                       ),
                       SizedBox(width: 10),
                       Column(
@@ -233,12 +209,11 @@ class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserv
   Widget _chatInput() {
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode(context)?DReciverBackg:Colors.white, // Adjust based on your theme
+        color: isDarkMode(context)? darkBackground:neutralLightGrey,
         borderRadius:  const BorderRadius.only(
           topLeft: Radius.circular(25.0),
           topRight: Radius.circular(25.0),
         ),
-
       ),
       padding: const EdgeInsets.only(bottom: 20.0, top: 20.0, left: 3),
       child: Row(
@@ -248,38 +223,34 @@ class _MessegescreenState extends State<Messegescreen> with WidgetsBindingObserv
               padding: const EdgeInsets.symmetric(horizontal: 10),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isDarkMode(context)?Textfieldlight:Textfielddark, // Adjust based on your theme
+                  color: isDarkMode(context)? primaryDarkBlue.withValues(alpha: 0.6):neutralLightGrey.withValues(alpha: 0.6),
                   borderRadius: BorderRadius.circular(50.0),
                 ),
                 child: Row(
                   children: [
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isDarkMode(context)?Textfieldlight:Textfielddark, // Adjust based on your theme
-                          borderRadius: BorderRadius.circular(50.0),
+                      child: CupertinoTextField(
+                        controller: _msgcontroller,
+                        placeholder: 'Send message...',
+                        cursorColor: PrimaryColor,
+                        style: TextStyle(
+                          color: isDarkMode(context)?Colors.white:Colors.black,           // Set your desired text color
+                          decoration: TextDecoration.none, // Ensure no underline in the text
                         ),
-                        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        child: CupertinoTextField(
-                          controller: _msgcontroller,
-                          placeholder: 'Send message...',
-                          cursorColor: PrimaryColor,
-                          style: TextStyle(
-                            color: isDarkMode(context)?Colors.white:Colors.black,           // Set your desired text color
-                            decoration: TextDecoration.none, // Ensure no underline in the text
-                          ),
-                          decoration: null, // Removing the default underline
-                          onTap: () {
-                            setState(() {
-                              _showemoji = false;
-                            });
-                          },
+                        decoration: null,
+                        placeholderStyle: TextStyle(
+                          color: hintColor(context),
+
                         ),
+                        onTap: () {
+                          setState(() {
+                            _showemoji = false;
+                          });
+                        },
                       ),
                     ),
                     IconButton(
                       onPressed: () {
-                        // Action to show attach and gallery buttons
                         showCupertinoModalPopup(
                           context: context,
                           builder: (BuildContext context) => CupertinoActionSheet(

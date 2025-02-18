@@ -47,19 +47,15 @@ class LoginState extends State<Login> {
         _isLoading = true;
       });
       try {
-        final UserCredential userCredential = await _auth
-            .signInWithEmailAndPassword(
-          email: _Email,
-          password: _Password,
-        );
+        await Apis.login(_Email, _Password);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Login Successful'),
             backgroundColor: PrimaryColor,
           ),
         );
-        if(userCredential.user!.emailVerified){
-           Apis.fetchUserInfo();
+        if(Apis.user!.emailVerified){
+          await Apis.fetchUserInfo();
           Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const MainHome()));
           await loginScuess();
         }else{

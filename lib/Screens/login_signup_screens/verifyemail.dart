@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:globegaze/Screens/home_screens/main_home.dart';
 import 'package:globegaze/themes/colors.dart';
 import '../../apis/APIs.dart';
-import '../../firebase/login_signup_methods/sendverifaction.dart';
 import '../../themes/dark_light_switch.dart';
 import 'login_with_email_and_passsword.dart';
 
@@ -35,7 +34,7 @@ class _VerifyEmailScreenState extends State<VerifyEmailScreen> {
       if (isEmailVerified) {
         _navigateToHome();
       } else {
-        sendVerificationEmail(user!, context);
+        Apis.sendVerificationEmail(user!, context);
         // Start checking email verification status every 3 seconds
         emailVerificationTimer = Timer.periodic(Duration(seconds: 3), (timer) {
           checkEmailVerified();

@@ -10,9 +10,9 @@ import '../../components/exploreComponents/suggestion.dart';
 import '../../components/postComponents/group_explorer_postcard.dart';
 import '../../components/postComponents/locationBottomSheet.dart';
 import '../../components/postComponents/new_post.dart';
+import '../../components/shimmarEffect.dart';
 import '../../locationservices/locationForSUGGESATION.dart';
 import '../../themes/colors.dart';
-import '../../themes/dark_light_switch.dart';
 
 class Explore extends StatefulWidget {
   const Explore({Key? key}) : super(key: key);
@@ -147,64 +147,34 @@ class _ExploreState extends State<Explore> {
 
   /// Shimmer skeleton for a post
   Widget buildShimmerPost() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey[300]!,
-      highlightColor: Colors.grey[100]!,
-      child: Padding(
+    return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: double.infinity, height: 200),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: 150, height: 20),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: double.infinity, height: 200),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: 150, height: 20),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: double.infinity, height: 200),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: 150, height: 20),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: double.infinity, height: 200),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: 150, height: 20),
             const SizedBox(height: 10),
-            Container(width: double.infinity, height: 200, decoration: BoxDecoration(
-              color: Colors.grey,
-              borderRadius: BorderRadius.circular(16.0), // Adjust the radius as needed
-            )),
+            ShimmerWidget(width: double.infinity, height: 200),
             const SizedBox(height: 10),
-
+            ShimmerWidget(width: 150, height: 20),
+            const SizedBox(height: 10),
           ],
         ),
-      ),
-    );
+      );
   }
   /// Build the suggestions section.
   /// If there is previous data, it is shown regardless of the loading state.
@@ -342,7 +312,6 @@ class _ExploreState extends State<Explore> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // AnimatedSwitcher can be used to animate changes if desired.
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 500),
               switchInCurve: Curves.easeIn,
@@ -357,13 +326,16 @@ class _ExploreState extends State<Explore> {
               child: Text('Posts',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: textColor(context))),
             ),
-            AnimatedSwitcher(
-              duration: const Duration(milliseconds: 500),
-              switchInCurve: Curves.easeIn,
-              switchOutCurve: Curves.easeOut,
-              child: Container(
-                key: const ValueKey('posts_section'),
-                child: buildPostsSection(),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 500),
+                switchInCurve: Curves.easeIn,
+                switchOutCurve: Curves.easeOut,
+                child: Container(
+                  key: const ValueKey('posts_section'),
+                  child: buildPostsSection(),
+                ),
               ),
             ),
           ],

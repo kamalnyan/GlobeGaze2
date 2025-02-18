@@ -57,7 +57,7 @@ class _ChatusercardState extends State<Searchusercard> {
                 const CircleAvatar(
                   radius: 25,
                   backgroundImage: AssetImage(
-                      'assets/png_jpeg_images/user.png') as ImageProvider,
+                      'assets/png_jpeg_images/user.jpg') as ImageProvider,
                   backgroundColor: Colors.transparent,
                 ),
                 Expanded(

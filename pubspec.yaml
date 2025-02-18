@@ -51,10 +51,12 @@ dependencies:
   firebase_app_check: ^0.3.1+4
   get: ^4.6.6
   flare_flutter: ^3.0.2
-  photo_manager: ^3.6.4 # Downgraded dependency
+  photo_manager: ^3.6.4
   rxdart:
   flutter_riverpod:
   uuid: ^4.5.1
+  google_nav_bar:
+  line_icons:
 
 dev_dependencies:
   flutter_test:
@@ -68,7 +70,7 @@ flutter:
     - assets/png_jpeg_images/
     - assets/privetApi/
     - assets/sounds/
-    - assets/png_jpeg_images/user.png
+    - assets/png_jpeg_images/user.jpg
 fonts:
   - family: MonaSans
     fonts:

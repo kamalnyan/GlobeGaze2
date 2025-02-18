@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../apis/APIs.dart';
 import '../../components/Elevated_button.dart';
 import '../../components/EmailValidator.dart';
 import '../../components/login_signup_components.dart';
 import '../../components/textfield.dart';
-import '../../firebase/login_signup_methods/AuthService.dart';
 import '../../themes/colors.dart';
 import '../../themes/dark_light_switch.dart';
 class CreateAnAccount extends StatefulWidget {
@@ -22,7 +22,6 @@ class CreateAccountState extends State<CreateAnAccount> {
   final TextEditingController _password = TextEditingController();
   final TextEditingController _confirmpassword = TextEditingController();
   late String _completePhone;
-  final AuthService _authService = AuthService();
   late SharedPreferences shareP;
   bool _isLoading = false; // Track if the signup process is ongoing
   Future<void> _signUp() async {
@@ -58,10 +57,10 @@ class CreateAccountState extends State<CreateAnAccount> {
           const SnackBar(content: Text('Passwords do not match'),backgroundColor: PrimaryColor,),
         );
       }else{
-       await _authService.signUpWithEmailPassword(
+       await Apis.signUpWithEmailPassword(
             fullName: fullName,
             about: 'hey ! lets travel',
-            image: 'assets/png_jpeg_images/user.png',
+            image: 'assets/png_jpeg_images/user.jpg',
             isOnline: false,
             lastActive: Timestamp.now().toString(),
             email: emaill,
@@ -185,75 +184,6 @@ class CreateAccountState extends State<CreateAnAccount> {
                         onPress:  _isLoading ? null : _signUp,),
                   ),
                   const SizedBox(height: 16),
-                  // OR divider
-                  // Text(
-                  //   'OR',
-                  //   style: TextStyle(
-                  //     fontSize: 18,
-                  //     color: isDarkMode ? PrimaryColor : Colors.black,
-                  //   ),
-                  // ),
-                  // SizedBox(height: 16),
-                  // // Social login options
-                  // Row(
-                  //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  //   children: [
-                  //     Column(
-                  //       children: [
-                  //         IconButton(
-                  //           onPressed: () {},
-                  //           icon: SvgPicture.asset(
-                  //             'assets/svg_images/google-color-icon.svg',
-                  //             height: 40,
-                  //             width: 40,
-                  //           ),
-                  //         ),
-                  //         Text(
-                  //           'Google',
-                  //           style: TextStyle(
-                  //             color: isDarkMode ? Colors.white : Colors.black,
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     Column(
-                  //       children: [
-                  //         IconButton(
-                  //           onPressed: () {},
-                  //           icon: Icon(Icons.apple),
-                  //           iconSize: 50,
-                  //         ),
-                  //         Text(
-                  //           'Apple',
-                  //           style: TextStyle(
-                  //             color: isDarkMode ? Colors.white : Colors.black,
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     Column(
-                  //       children: [
-                  //         IconButton(
-                  //           onPressed: () {},
-                  //           icon: SvgPicture.asset(
-                  //             'assets/svg_images/facebook-round-color-icon.svg',
-                  //             height: 40,
-                  //             width: 40,
-                  //           ),
-                  //         ),
-                  //         Text(
-                  //           'Facebook',
-                  //           style: TextStyle(
-                  //             color: isDarkMode ? Colors.white : Colors.black,
-                  //             fontSize: 16,
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ],
-                  // ),
                 ],
               ),
             ),

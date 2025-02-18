@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/themes/colors.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:globegaze/apis/APIs.dart';
 import '../../components/chatComponents/Chatusermodel.dart';
@@ -42,22 +43,18 @@ class _ChatListState extends State<ChatList> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-        backgroundColor: isDarkMode(context)
-            ? const Color(0xFF1E1E2A)
-            : Colors.white,
         appBar: AppBar(
-          automaticallyImplyLeading: false,
+          iconTheme: IconThemeData(
+            color: textColor(context), // Change back button color
+          ),
           backgroundColor: isDarkMode(context)
-              ? const Color(0xFF1E1E2A)
-              : Colors.white,
+              ?darkBackground:Colors.white,
           title: _isSearching
               ? CupertinoSearchTextField(
             autofocus: true,
             controller: _searchController,
             style: TextStyle(
-              color: isDarkMode(context)
-                  ? Colors.white
-                  : Colors.black,
+              color: textColor(context),
             ),
             onChanged: (value) {
               _searchList.clear();
@@ -73,12 +70,13 @@ class _ChatListState extends State<ChatList> {
               setState(() {});
             },
           )
-              : const Text(
+              :  Text(
             'Messages',
             style: TextStyle(
               fontSize: 29,
               fontFamily: 'MonaSans',
               fontWeight: FontWeight.bold,
+              color: textColor(context),
             ),
           ),
           actions: [
@@ -86,7 +84,7 @@ class _ChatListState extends State<ChatList> {
               icon: Icon(
                 _isSearching
                     ? CupertinoIcons.clear_thick
-                    : CupertinoIcons.search,
+                    : CupertinoIcons.search, color: textColor(context),
               ),
               onPressed: () {
                 setState(() {
@@ -175,7 +173,7 @@ class _ChatListState extends State<ChatList> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting ||
                   snapshot.connectionState == ConnectionState.none) {
-                return _buildShimmerList(); // Show shimmer while waiting for data
+                return _buildShimmerList();
               }
               if (snapshot.connectionState == ConnectionState.active ||
                   snapshot.connectionState == ConnectionState.done) {

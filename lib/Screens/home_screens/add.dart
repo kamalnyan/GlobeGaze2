@@ -410,7 +410,7 @@ class _AddPageState extends State<AddPage> {
                 placeholder: (context, url) =>
                     const Center(child: CupertinoActivityIndicator()),
                 errorWidget: (context, url, error) =>
-                    Image.asset('assets/png_jpeg_images/user.png'),
+                    Image.asset('assets/png_jpeg_images/user.jpg'),
               ),
             ),
           ),

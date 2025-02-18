@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:globegaze/apis/APIs.dart';
 import 'package:globegaze/components/chatComponents/Chatusermodel.dart';
 import 'package:globegaze/encrypt_decrypt/endrypt.dart';
-import 'package:globegaze/firebase/usermodel/messege_model.dart';
 
 import '../../Screens/chat/messegescreen.dart';
 import '../../main.dart';
 import '../../themes/colors.dart';
 import '../../themes/dark_light_switch.dart';
 import '../mydate.dart';
+import 'messegemodel.dart';
 
 class Chatusercard extends StatefulWidget {
   final ChatUser user;
@@ -29,7 +29,7 @@ class _ChatusercardState extends State<Chatusercard> {
       margin: EdgeInsets.symmetric(horizontal: mq.width * .02, vertical: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17.0)),
       elevation: 0,
-      color: isDarkMode(context) ? const Color(0xFF1E1E2A) : Colors.white,
+      color: isDarkMode(context) ? darkBackground:Colors.white,
       child: CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: () {
@@ -72,7 +72,7 @@ class _ChatusercardState extends State<Chatusercard> {
                             imageUrl: widget.user.image,
                             fit: BoxFit.cover,
                             placeholder: (context, url) => Center(child: CupertinoActivityIndicator()),
-                            errorWidget: (context, url, error) => Image.asset('assets/png_jpeg_images/user.png'),
+                            errorWidget: (context, url, error) => Image.asset('assets/png_jpeg_images/user.jpg'),
                           ),
                         ),
                       ),

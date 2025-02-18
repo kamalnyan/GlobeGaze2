@@ -24,7 +24,6 @@ class _ProfilePageState extends State<ProfilePage> {
   final ImagePicker picker = ImagePicker();
   bool _isUploading = false;
 
-  // Profile data (mocked)
   String fullName = Apis.me.name;
   String email = Apis.me.email;
   String phone = Apis.me.Phone;
@@ -41,7 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Builder(
             builder: (context) {
               return IconButton(
-                icon:  Icon(CupertinoIcons.line_horizontal_3,color: textColor(context),),
+                icon:  Icon(CupertinoIcons.slider_horizontal_3,color: textColor(context),),
                 onPressed: () {
                   Scaffold.of(context).openEndDrawer();
                 },
@@ -175,7 +174,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             placeholder: (context, url) => const Center(
                                 child: CupertinoActivityIndicator()),
                             errorWidget: (context, url, error) =>
-                                Image.asset('assets/png_jpeg_images/user.png'),
+                                Image.asset('assets/png_jpeg_images/user.jpg'),
                           ),
                         ),
                       ),
@@ -188,7 +187,6 @@ class _ProfilePageState extends State<ProfilePage> {
                               source: ImageSource.gallery,
                               imageQuality: 70,
                             );
-
                             if (image != null) {
                               setState(() => _isUploading = true);
                               try {

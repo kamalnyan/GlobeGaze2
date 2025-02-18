@@ -4,29 +4,148 @@ import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cool_alert/cool_alert.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/apis/usermodel/usermodel.dart';
 import 'package:globegaze/encrypt_decrypt/endrypt.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 
 import '../Screens/login_signup_screens/login_with_email_and_passsword.dart';
+import '../Screens/login_signup_screens/verifyemail.dart';
+import '../components/AlertDilogbox.dart';
 import '../components/chatComponents/Chatusermodel.dart';
 import '../components/chatComponents/messegemodel.dart';
 import '../components/dilog.dart';
-import '../firebase/login_signup_methods/AuthService.dart';
+import '../themes/colors.dart';
 import 'PushNotifaction.dart';
 final AudioPlayer _audioPlayer = AudioPlayer();
 class Apis {
   static FirebaseAuth auth = FirebaseAuth.instance;
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static FirebaseStorage storage = FirebaseStorage.instance;
-  static String uid = auth.currentUser!.uid;
   static User? user = auth.currentUser;
-  static String? userId = uid;
+  static String uid = user!.uid;
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+  // SingIn
+  static Future<void> login(String _Email, String _Password) async {
+    final UserCredential userCredential = await auth.signInWithEmailAndPassword(email: _Email, password: _Password,);
+    if (userCredential.user != null) {
+      user= userCredential.user;
+      uid = userCredential.user!.uid;
+    }
+  }
+  static Future<void> signUpWithEmailPassword({
+    required String fullName,
+    required String email,
+    required String about,
+    required String image,
+    required String phone,
+    required String password,
+    required bool isOnline,
+    required String lastActive,
+    required String pushToken,
+    required bool isUerAdded,
+    required BuildContext context
+  }) async {
+    try {
+      UserCredential userCredential = await auth
+          .createUserWithEmailAndPassword(email: email, password: password,);
+       user = userCredential.user;
+      final username = trimBeforeAt(email);
+      if (user != null) {
+        UserModel user = UserModel(
+          id: uid,
+          fullName: fullName,
+          email: email,
+          about: about,
+          image: image,
+          phone: phone,
+          username: username,
+          isOnline: false,
+          lastActive: Timestamp.now(),
+          pushToken: '',
+          createdAt: Timestamp.now(),
+          userAdded: true,
+        );
+        await firestore.collection('Users').doc(uid).set(user.toJson());
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Account created Scuessfully'),
+            backgroundColor: PrimaryColor,),
+        );
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=> VerifyEmailScreen(email)));
+      }
+    }on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "The password provided is too weak.",title: "Error");
+      } else if (e.code == 'email-already-in-use') {
+        AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "The account already exists for that email.",title: "Error");
+      } else if (e.code == 'invalid-email') {
+        AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "The email address is badly formatted.",title: "Error");
+      } else if (e.code == 'operation-not-allowed') {
+        AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "Signing in with Email and Password is not enabled.",title: "Error");
+      } else {
+        AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "An unexpected error occurred: ${e.message}",title: "Error");
+      }
+    } catch (e) {
+      AlertDialogBox(context: context,animationType: CoolAlertType.error,message: "An unexpected error occurred: ${e.toString()}",title: "Error");
+    }
+  }
+  static Future<void> sendVerificationEmail(User user,BuildContext context) async {
+    try {
+      await user.sendEmailVerification();
+      AlertDialogBox(title: "Verifaction",message: 'Verification email sent to ${user.email}',animationType: CoolAlertType.success,context: context);
+    } catch (e) {
+      AlertDialogBox(title: "Error",message: 'Error sending verification email',animationType: CoolAlertType.error,context: context);
+    }
+  }
+  static Future<void> addUsernameToUserDocument(String uid, String username) async {
+    try {
+      var usernameQuery = await firestore
+          .collection('Users')
+          .where('Username', isEqualTo: username)
+          .get();
+      if (usernameQuery.docs.isEmpty) {
+        await firestore.collection('Users').doc(uid).update({
+          'Username': username,
+        });
+        print('Username added successfully.');
+      } else {
+        print('Username already exists. Please choose another one.');
+      }
+    } catch (e) {
+      print('Error adding username: $e');
+    }
+  }
+  static Future<String?> getUsernameFromFirestore(String uid) async {
+    try {
+      DocumentSnapshot userDoc = await firestore.collection('Users').doc(uid).get();
+      if (userDoc.exists && userDoc.data() != null) {
+        var data = userDoc.data() as Map<String, dynamic>;
+        if (data.containsKey('Username')) {
+          return data['Username'];
+        } else {
+          print('Username field does not exist in the document.');
+          return null;
+        }
+      } else {
+        print('User document does not exist.');
+        return null;
+      }
+    } catch (e) {
+      print('Error fetching username: $e');
+      return null;
+    }
+  }
+  static String trimBeforeAt(String email) {
+    if (email.contains('@')) {
+      return email.split('@')[0];
+    }
+    return email; // Return original if '@' is not found
+  }
   static Future<void> deleteUserAccount(BuildContext context, String pass) async {
     try {
       if (user != null) {
@@ -127,7 +246,7 @@ class Apis {
   }
   // Getting All user data for Searching
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsersindata(BuildContext context) {
-    if (userId == null) {
+    if (uid == null) {
       Dialogs.showSnackbar(context, "User not logged in ");
       throw Exception("User not logged in");
     }
@@ -254,14 +373,16 @@ class Apis {
     try {
       if (user == null) throw Exception("No user is currently logged in.");
       final DocumentSnapshot userDoc =
-      await firestore.collection('Users').doc(user!.uid).get();
+      await firestore.collection('Users').doc(uid).get();
       if (userDoc.exists) {
         me = ChatUser.fromJson(userDoc.data() as Map<String, dynamic>);
         log("User info fetched successfully: ${me?.name}");
+        log("User info fetched successfully user: ${user!.email}");
+        log("User info fetched successfully me: ${me.email}");
         await getFirebaseMessagingToken();
         await updateActiveStatus(true);
       } else {
-        log("No user document found for UID: ${user!.uid}");
+        log("No user document found for UID: ${uid}");
       }
     } catch (e) {
       log("Error fetching user info: $e");

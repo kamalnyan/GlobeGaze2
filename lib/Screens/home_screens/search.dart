@@ -7,6 +7,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../apis/APIs.dart';
 import '../../components/chatComponents/Chatusermodel.dart';
 import '../../components/isDarkMode.dart';
+import '../../components/userComponents/userDilog.dart';
 import '../../themes/colors.dart';
 
 class SearchPage extends StatefulWidget {
@@ -98,14 +99,6 @@ class _SearchPageState extends State<SearchPage> {
                                   Icons.search,
                                   color: textColor(context),
                                 ),
-                                suffixIcon:  IconButton(
-                                  icon:Icon(CupertinoIcons.clear_circled,color: Colors.red.withValues(alpha: 0.8)),
-                                  onPressed: (){
-                                   setState(() {
-                                     isSearching=false;
-                                   });
-                                  },
-                                ),
                               ),
                               onChanged: (value) {
                                 setState(() {
@@ -126,7 +119,6 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  /// Build grid view for friend media (default view).
   Widget _buildMediaGrid() {
     // Flatten the media URLs into a single list.
     List<String> allMedia = _friendMedia.values.expand((list) => list).toList();
@@ -161,7 +153,6 @@ class _SearchPageState extends State<SearchPage> {
       },
     );
   }
-
   /// Build grid view for search results (users)
   Widget _buildSearchResults() {
     return StreamBuilder<QuerySnapshot>(
@@ -205,28 +196,32 @@ class _SearchPageState extends State<SearchPage> {
           itemCount: filteredUsers.length,
           itemBuilder: (context, index) {
             ChatUser user = filteredUsers[index];
-            return Column(
-              children: [
-                // User profile picture in a circle.
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: (user != null &&
-                      user.image.isNotEmpty &&
-                      user.image.startsWith('http'))
-                      ? CachedNetworkImageProvider(user.image)
-                      : const AssetImage('assets/png_jpeg_images/user.png') as ImageProvider,
-                  backgroundColor: Colors.grey.shade300,
-                ),
-                const SizedBox(height: 6),
-                // Username text.
-                Text(
-                  user.username.length > 10
-                      ? '${user.username.substring(0, 10)}...'
-                      : user.username,
-                  style: TextStyle(fontSize: 14, color: hintColor(context)),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+            return InkWell(
+              onTap: (){
+                showUserDialog(user,context);
+              },
+              child: Column(
+                children: [
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundImage: (user != null &&
+                        user.image.isNotEmpty &&
+                        user.image.startsWith('http'))
+                        ? CachedNetworkImageProvider(user.image)
+                        : const AssetImage('assets/png_jpeg_images/user.jpg') as ImageProvider,
+                    backgroundColor: Colors.grey.shade300,
+                  ),
+                  const SizedBox(height: 6),
+                  // Username text.
+                  Text(
+                    user.username.length > 10
+                        ? '${user.username.substring(0, 10)}...'
+                        : user.username,
+                    style: TextStyle(fontSize: 14, color: hintColor(context)),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             );
           },
         );

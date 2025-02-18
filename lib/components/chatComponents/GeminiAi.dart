@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:globegaze/firebase/usermodel/messege_model.dart';
 import 'package:globegaze/themes/colors.dart';
 import 'package:globegaze/themes/dark_light_switch.dart';
 import '../../Screens/chat/gemini.dart';
 import '../mydate.dart';
+import 'messegemodel.dart';
 
 class GeminiChatCard extends StatefulWidget {
   const GeminiChatCard({super.key});
@@ -21,7 +21,7 @@ class _GeminiChatCardState extends State<GeminiChatCard> {
       margin: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width * .02, vertical: 2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(17.0)),
       elevation: 0,
-      color: isDarkMode(context) ? const Color(0xFF1E1E2A) : Colors.white,
+      color: isDarkMode(context) ?  darkBackground:Colors.white,
       child: CupertinoButton(
         padding: EdgeInsets.zero,
         onPressed: () {

@@ -31,7 +31,8 @@ class _MessegeCardState extends State<MessegeCard> {
             alignment: Alignment.topRight,
             child: _Sender()) : Align(
             alignment: Alignment.topLeft,
-            child: _Reciver()));
+            child: _Reciver())
+    );
   }
   Widget _Reciver() {
     if (widget.message.read.isEmpty) {
@@ -44,20 +45,13 @@ class _MessegeCardState extends State<MessegeCard> {
       margin: EdgeInsets.symmetric(
           horizontal: mq.width * .04, vertical: mq.height * .01),
       decoration: BoxDecoration(
-        color: isDarkMode(context) ? DReciverBackg : ReciverBackg,
+        color: isDarkMode(context) ? primaryDarkBlue.withValues(alpha: 0.6) : neutralLightGrey.withValues(alpha: 0.6) ,
         // making borders curved
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemGrey3.withOpacity(0.5),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
       ),
       child: widget.message.type == Type.text
           ? Column(
@@ -116,20 +110,13 @@ class _MessegeCardState extends State<MessegeCard> {
       margin: EdgeInsets.symmetric(
           horizontal: mq.width * .04, vertical: mq.height * .01),
       decoration: BoxDecoration(
-        color: isDarkMode(context) ? PrimaryColor: PrimaryColor,
+        color:  PrimaryColor,
         // making borders curved
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
           bottomLeft: Radius.circular(30),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: CupertinoColors.systemGrey3.withOpacity(0.5),
-            blurRadius: 10,
-            spreadRadius: 2,
-          ),
-        ],
       ),
       child: widget.message.type == Type.text
           ? Column(
@@ -153,14 +140,12 @@ class _MessegeCardState extends State<MessegeCard> {
                     context: context, time: widget.message.sent),
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDarkMode(context)
-                      ? CupertinoColors.systemGrey2
-                      : CupertinoColors.systemGrey, // Time text color
+                  color: hintColor(context)
                 ),
               ),
               SizedBox(width: 2),
               if (widget.message.read.isNotEmpty)
-                const Icon(CupertinoIcons.check_mark_circled_solid,
+                const Icon(CupertinoIcons.check_mark_circled,
                     color: CupertinoColors.activeBlue, size: 20),
             ],
           ),
@@ -197,14 +182,12 @@ class _MessegeCardState extends State<MessegeCard> {
                     context: context, time: widget.message.sent),
                 style: TextStyle(
                   fontSize: 13,
-                  color: isDarkMode(context)
-                      ? CupertinoColors.systemGrey2
-                      : CupertinoColors.systemGrey, // Time text color
+                  color:  hintColor(context)
                 ),
               ),
               SizedBox(width: 2),
               if (widget.message.read.isNotEmpty)
-                const Icon(CupertinoIcons.check_mark_circled_solid,
+                const Icon(CupertinoIcons.checkmark_circle,
                     color: CupertinoColors.activeBlue, size: 20),
             ],
           ),

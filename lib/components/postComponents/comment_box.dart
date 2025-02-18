@@ -6,6 +6,7 @@ import 'package:globegaze/themes/dark_light_switch.dart';
 import 'package:intl/intl.dart';
 
 import '../../apis/APIs.dart';
+import '../shimmarEffect.dart';
 
 void showCommentsBottomSheet(BuildContext context, String postId) {
   showModalBottomSheet(
@@ -13,7 +14,7 @@ void showCommentsBottomSheet(BuildContext context, String postId) {
     isScrollControlled: true,
     backgroundColor: isDarkMode(context) ? darkBackground : Colors.white,
     shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(46)),
     ),
     builder: (context) {
       return _CommentsBottomSheetContent(postId: postId);
@@ -40,30 +41,45 @@ class _CommentsBottomSheetContentState
   @override
   void initState() {
     super.initState();
-    commentsCollection = FirebaseFirestore.instance.
-        collection('CommanPosts').doc(widget.postId).collection('comments');
+    commentsCollection = FirebaseFirestore.instance
+        .collection('CommanPosts')
+        .doc(widget.postId)
+        .collection('comments');
   }
 
-  void addComment(String text) {
+  Future<void> addComment(String text) async {
     if (text.isNotEmpty) {
-      commentsCollection.add({
+      // Create the comment document and await its reference.
+      DocumentReference commentRef = await commentsCollection.add({
         'username': Apis.me.username,
-        'profilePic': Apis.me.image,
+        'profilePic': Apis.me.image.isEmpty ? '' : Apis.me.image,
         'comment': text,
-        'likes': 0,
-        'liked': false,
         'postId': widget.postId,
-        'uid':Apis.me.id,
+        'uid': Apis.me.id,
         'timestamp': FieldValue.serverTimestamp(),
       });
       commentController.clear();
     }
   }
 
-  void toggleLike(String commentId, bool liked, int likes) {
-    commentsCollection.doc(commentId).update({
-      'liked': !liked,
-      'likes': liked ? likes - 1 : likes + 1,
+  void toggleLike(String commentId, bool liked) {
+    DocumentReference likeDoc = commentsCollection
+        .doc(commentId)
+        .collection('likes')
+        .doc(Apis.uid);
+
+    likeDoc.get().then((docSnapshot) {
+      if (docSnapshot.exists) {
+        likeDoc.update({
+          'liked': !liked,
+          'userId': Apis.uid,
+        });
+      } else {
+        likeDoc.set({
+          'liked': true,
+          'userId': Apis.uid,
+        });
+      }
     });
   }
 
@@ -76,13 +92,10 @@ class _CommentsBottomSheetContentState
     final username = commentData['username'] ?? '';
     final comment = commentData['comment'] ?? '';
     final profilePicUrl = commentData['profilePic'] ?? '';
-    final likes = commentData['likes'] ?? 0;
-    final liked = commentData['liked'] ?? false;
     final timestamp = commentData['timestamp'] as Timestamp?;
     final time = timestamp != null
         ? DateFormat('hh:mm a').format(timestamp.toDate())
         : null;
-
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Row(
@@ -92,7 +105,7 @@ class _CommentsBottomSheetContentState
             radius: 20,
             backgroundImage: profilePicUrl.isNotEmpty
                 ? NetworkImage(profilePicUrl)
-                : AssetImage('assets/default_avatar.png') as ImageProvider,
+                : AssetImage('assets/png_jpeg_images/user.jpg') as ImageProvider,
           ),
           SizedBox(width: 10),
           Expanded(
@@ -111,25 +124,63 @@ class _CommentsBottomSheetContentState
                 ),
                 if (time != null)
                   Text(time,
-                      style: TextStyle(fontSize: 12, color: hintColor(context))),
+                      style:
+                      TextStyle(fontSize: 12, color: hintColor(context))),
               ],
             ),
           ),
           SizedBox(width: 8),
           Column(
             children: [
-              IconButton(
-                iconSize: 20,
-                padding: EdgeInsets.zero,
-                constraints: BoxConstraints(),
-                icon: Icon(liked ? Icons.favorite : Icons.favorite_border,
-                    color: liked ? Colors.red : Colors.black),
-                onPressed: () => toggleLike(document.id, liked, likes),
+              StreamBuilder<DocumentSnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('CommanPosts')
+                    .doc(widget.postId)
+                    .collection('comments')
+                    .doc(document.id)
+                    .collection('likes')
+                    .doc(Apis.uid)
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  bool liked = false;
+                  if (snapshot.hasData && snapshot.data!.exists) {
+                    final data =
+                    snapshot.data!.data() as Map<String, dynamic>;
+                    liked = data['liked'] ?? false;
+                  }
+                  return IconButton(
+                    iconSize: 20,
+                    padding: EdgeInsets.zero,
+                    icon: Icon(
+                      liked ? Icons.favorite : Icons.favorite_border,
+                      color: liked ? Colors.red : textColor(context),
+                    ),
+                    onPressed: () => toggleLike(document.id, liked),
+                  );
+                },
               ),
-              Text('$likes',
-                  style: TextStyle(fontSize: 12, color: textColor(context))),
+              // FutureBuilder to fetch the total likes count for this comment.
+              FutureBuilder<QuerySnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('CommanPosts')
+                    .doc(widget.postId)
+                    .collection('comments')
+                    .doc(document.id)
+                    .collection('likes')
+                    .get(),
+                builder: (context, snapshot) {
+                  int likesCount = 0;
+                  if (snapshot.hasData) {
+                    likesCount = snapshot.data!.docs.length;
+                  }
+                  return Text(
+                    '$likesCount',
+                    style: TextStyle(fontSize: 12, color: textColor(context)),
+                  );
+                },
+              ),
             ],
-          ),
+          )
         ],
       ),
     );
@@ -150,19 +201,23 @@ class _CommentsBottomSheetContentState
               width: 40,
               margin: EdgeInsets.only(bottom: 10),
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: hintColor(context),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: commentsCollection.orderBy('timestamp').snapshots(),
+                stream: commentsCollection
+                    .orderBy('timestamp', descending: false)
+                    .snapshots(),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {
-                    return Center(child: Text('Error: ${snapshot.error}'));
+                    return Center(
+                        child: Text('Error: ${snapshot.error}'));
                   }
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                  if (snapshot.connectionState ==
+                      ConnectionState.waiting) {
+                    return _shimmarEffect();
                   }
                   final comments = snapshot.data!.docs;
                   return ListView.builder(
@@ -179,11 +234,14 @@ class _CommentsBottomSheetContentState
               padding: EdgeInsets.only(bottom: 10, top: 5),
               child: Row(
                 children: [
-                  CircleAvatar(backgroundColor: Colors.black),
+                  CircleAvatar(
+                      backgroundImage: AssetImage(Apis.me.image),
+                  ),
                   SizedBox(width: 10),
                   Expanded(
                     child: TextField(
                       controller: commentController,
+                      style: TextStyle(color: textColor(context)),
                       decoration: InputDecoration(
                         hintText: 'Add comment...',
                         hintStyle: TextStyle(color: hintColor(context)),
@@ -193,25 +251,26 @@ class _CommentsBottomSheetContentState
                         ),
                         filled: true,
                         fillColor: isDarkMode(context)
-                            ? primaryDarkBlue
+                            ? primaryDarkBlue.withValues(alpha: 0.6)
                             : neutralLightGrey.withValues(alpha: 0.6),
-                        contentPadding:
-                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
                       ),
+                      cursorColor: PrimaryColor,
                     ),
                   ),
-                  const SizedBox(width: 10,),
+                  const SizedBox(width: 10),
                   ElevatedButton.icon(
-                    style:
-                    ElevatedButton.styleFrom(backgroundColor: PrimaryColor),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: PrimaryColor),
                     onPressed: () => addComment(commentController.text),
                     icon: Icon(
                       CupertinoIcons.paperplane,
-                      color: darkBackground,
+                      color: gradientStartColor,
                     ),
                     label: Text(
                       'Send',
-                      style: TextStyle(color: darkBackground),
+                      style: TextStyle(color: gradientStartColor),
                     ),
                   ),
                 ],
@@ -220,6 +279,55 @@ class _CommentsBottomSheetContentState
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildCommentShimmer() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const ShimmerWidget(width: 40, height: 40, borderRadius: BorderRadius.all(Radius.circular(20))), // Profile Picture Placeholder
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const ShimmerWidget(width: 100, height: 12, borderRadius: BorderRadius.all(Radius.circular(4))), // Username Placeholder
+                const SizedBox(height: 4),
+                const ShimmerWidget(width: double.infinity, height: 14, borderRadius: BorderRadius.all(Radius.circular(4))), // Comment Line 1
+                const SizedBox(height: 4),
+                const ShimmerWidget(width: 200, height: 14, borderRadius: BorderRadius.all(Radius.circular(4))), // Comment Line 2
+                const SizedBox(height: 6),
+                const ShimmerWidget(width: 50, height: 10, borderRadius: BorderRadius.all(Radius.circular(4))), // Timestamp Placeholder
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Column(
+            children: [
+              const ShimmerWidget(width: 20, height: 20, borderRadius: BorderRadius.all(Radius.circular(4))), // Like Icon Placeholder
+              const SizedBox(height: 4),
+              const ShimmerWidget(width: 20, height: 12, borderRadius: BorderRadius.all(Radius.circular(4))), // Like Count Placeholder
+            ],
+          )
+        ],
+      ),
+    );
+  }
+  Widget _shimmarEffect(){
+    return Column(
+    children: [
+      _buildCommentShimmer(),
+      const SizedBox(height: 10,),
+      _buildCommentShimmer(),
+      const SizedBox(height: 10,),
+      _buildCommentShimmer(),
+      const SizedBox(height: 10,),
+      _buildCommentShimmer(),
+      const SizedBox(height: 10,),
+    ],
     );
   }
 }

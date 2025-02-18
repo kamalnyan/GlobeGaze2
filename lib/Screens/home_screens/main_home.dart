@@ -1,16 +1,14 @@
-import 'package:convex_bottom_bar/convex_bottom_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:globegaze/Screens/home_screens/profile.dart';
 import 'package:globegaze/Screens/home_screens/search.dart';
-import 'package:globegaze/Screens/home_screens/trips.dart';
+import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:line_icons/line_icons.dart';
 import '../../RequestPermissions/permissions.dart';
-import '../../components/profile/drawer.dart';
-import '../../firebase/login_signup_methods/username.dart';
 import '../../themes/colors.dart';
-import '../../themes/dark_light_switch.dart';
 import '../Notifaction/notifactions.dart';
 import '../chat/chatList_ui.dart';
 import 'add.dart';
@@ -24,24 +22,28 @@ class MainHome extends StatefulWidget {
 }
 
 class _MainHomeState extends State<MainHome> {
-  int _page = 0;
+  int _selectedIndex = 0;
   bool isDarkMode = false;
   final PageController _pageController = PageController(initialPage: 0);
   String? username;
   bool isLoading = true;
   static FirebaseAuth auth = FirebaseAuth.instance;
   static User? user = auth.currentUser;
-  static String? userId = user!.uid;
+  static String? userId = user?.uid;
+
   @override
   void dispose() {
     permission.requestPermissions();
+    _pageController.dispose();
     super.dispose();
   }
+
   @override
   void initState() {
     permission.requestPermissions();
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
@@ -49,37 +51,62 @@ class _MainHomeState extends State<MainHome> {
 
     return Scaffold(
       appBar: buildAppBar(
-          _page, isDarkMode, context, isLoading ? 'Loading...' : username),
+          _selectedIndex, isDarkMode, context, isLoading ? 'Loading...' : username),
       body: PageView(
         controller: _pageController,
         onPageChanged: (index) {
           setState(() {
-            _page = index;
+            _selectedIndex = index;
           });
         },
         children: _pages,
         physics: const NeverScrollableScrollPhysics(),
       ),
-      bottomNavigationBar: ConvexAppBar(
-        style: TabStyle.react,
-        height: 70,
-        backgroundColor: isDarkMode ? Colors.black38 : Colors.white,
-        activeColor: PrimaryColor,
-        color: isDarkMode ? Colors.white : Colors.black38,
-        items: const [
-          TabItem(icon: Icons.explore, title: 'Explore'),
-          TabItem(icon: Icons.search, title: 'Search'),
-          TabItem(icon: Icons.add, title: 'Add'),
-          TabItem(icon: Icons.train, title: 'Trips'),
-          TabItem(icon: Icons.account_circle, title: 'Profile'),
-        ],
-        initialActiveIndex: _page,
-        onTap: (int index) {
-          setState(() {
-            _page = index;
-          });
-          _pageController.jumpToPage(index);
-        },
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: isDarkMode?darkBackground:Colors.white,
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8),
+            child: GNav(
+              rippleColor: isDarkMode?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
+              hoverColor: isDarkMode?primaryDarkBlue:neutralLightGrey,
+              gap: 8,
+              activeColor: textColor(context),
+              iconSize: 24,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+              duration: Duration(milliseconds: 400),
+              tabBackgroundColor:isDarkMode?primaryDarkBlue.withValues(alpha: 0.6):neutralLightGrey.withValues(alpha: 0.6),
+              color: hintColor(context),
+              tabs: const [
+                GButton(
+                  icon: LineIcons.globe,
+                  text: 'Explore',
+                ),
+                GButton(
+                  icon: LineIcons.search,
+                  text: 'Search',
+                ),
+                GButton(
+                  icon: LineIcons.plusCircle,
+                  text: 'Add',
+                ),
+                GButton(
+                  icon: LineIcons.user,
+                  text: 'Profile',
+                ),
+              ],
+              selectedIndex: _selectedIndex,
+              onTabChange: (index) {
+                setState(() {
+                  _selectedIndex = index;
+                });
+                _pageController.jumpToPage(index);
+              },
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -89,12 +116,12 @@ class _MainHomeState extends State<MainHome> {
     switch (pageIndex) {
       case 0:
         return AppBar(
-          backgroundColor: isDarkMode?darkBackground:Colors.white,
+          backgroundColor: isDarkMode ? darkBackground : Colors.white,
           title: RichText(
             text: TextSpan(
               style: TextStyle(
                 fontSize: 25,
-                color: LightDark(isDarkMode),
+                color: textColor(context),
               ),
               children: const [
                 TextSpan(
@@ -110,17 +137,67 @@ class _MainHomeState extends State<MainHome> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: Icon(CupertinoIcons.bell,color: textColor(context),),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>Notifactions(userId: userId!,)));
+            StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('Users')
+                  .doc(userId)
+                  .collection('Request')
+                  .where('userAdded', isEqualTo: false)
+                  .snapshots(),
+              builder: (context, snapshot) {
+                int notificationCount = 0;
+                if (snapshot.hasData) {
+                  notificationCount = snapshot.data!.docs.length;
+                }
+                return Stack(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                        CupertinoIcons.bell,
+                        color: textColor(context),
+                      ),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => Notifactions(userId: userId!),
+                          ),
+                        );
+                      },
+                    ),
+                    if (notificationCount > 0)
+                      Positioned(
+                        right: 8,
+                        top: 8,
+                        child: Container(
+                          padding: const EdgeInsets.all(2),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          constraints: const BoxConstraints(
+                            minWidth: 12,
+                            minHeight: 12,
+                          ),
+                          child: Text(
+                            '$notificationCount',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ),
+                  ],
+                );
               },
             ),
             IconButton(
-              icon: Icon(FontAwesomeIcons.facebookMessenger,color: textColor(context),),
+              icon: Icon(FontAwesomeIcons.facebookMessenger, color: textColor(context)),
               onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => ChatList()));
+                Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => ChatList()));
               },
             ),
             const SizedBox(width: 15),
@@ -131,19 +208,6 @@ class _MainHomeState extends State<MainHome> {
       case 2:
         return null;
       case 3:
-        return AppBar(
-          backgroundColor: isDarkMode?darkBackground:Colors.white,
-          title:  Text("My Trips",style: TextStyle(color: textColor(context)),),
-          actions: [
-            IconButton(
-              icon:  Icon(Icons.add_circle,color: textColor(context),),
-              onPressed: () {
-                // Action to add a new trip
-              },
-            ),
-          ],
-        );
-      case 4:
         return null;
       default:
         return AppBar(
@@ -156,7 +220,6 @@ class _MainHomeState extends State<MainHome> {
     Explore(),
     SearchPage(),
     AddPage(),
-    Trips(),
     ProfilePage(),
   ];
 }

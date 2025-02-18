@@ -17,7 +17,7 @@ Widget profileGrid(BuildContext context) {
       final photoUrls = snapshot.data!;
       return GridView.builder(
         shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(), // To use it within a scrollable parent
+        physics: const NeverScrollableScrollPhysics(),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 3, // 4 images per row
           crossAxisSpacing: 8,
