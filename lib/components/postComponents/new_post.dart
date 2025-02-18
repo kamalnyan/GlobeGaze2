@@ -302,17 +302,14 @@ void togglePostLike(String postId, bool liked) {
       .collection('likes')
       .doc(Apis.uid);
 
-  likeDoc.get().then((docSnapshot) {
-    if (docSnapshot.exists) {
-      likeDoc.update({
-        'liked': !liked,
-        'userId': Apis.uid,
-      });
-    } else {
-      likeDoc.set({
-        'liked': true,
-        'userId': Apis.uid,
-      });
-    }
-  });
+  if (liked) {
+    // If already liked, remove the like entry (unlike the post)
+    likeDoc.delete();
+  } else {
+    // If not liked, add a new like entry
+    likeDoc.set({
+      'liked': true,
+      'userId': Apis.uid,
+    });
+  }
 }
