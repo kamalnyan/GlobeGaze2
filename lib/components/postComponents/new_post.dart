@@ -11,12 +11,14 @@ import '../../themes/colors.dart';
 import '../mydate.dart';
 import '../shimmarEffect.dart';
 import 'comment_box.dart';
+import 'imagePreview.dart';
 import 'options.dart';
 
-Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) async {
+Future<Widget> PostCard(
+    BuildContext context, Map<String, dynamic> postData) async {
   UserModel? user = await addPost.fetchUserInformation(postData['userId']);
   final List<dynamic> mediaUrls = postData['mediaUrls'] ?? [];
-  int currentIndex = 0; // Local variable for tracking current page index
+  int currentIndex = 0;
 
   // Fallback for createdAt timestamp
   final DateTime createdAt = postData['createdAt'] != null
@@ -50,8 +52,8 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
             style: TextStyle(color: hintColor(context)),
           ),
           trailing: IconButton(
-              icon:Icon(CupertinoIcons.ellipsis_vertical_circle_fill),
-              color: textColor(context),
+            icon: Icon(CupertinoIcons.ellipsis_vertical_circle_fill),
+            color: textColor(context),
             onPressed: () {
               showCustomMenu(context);
             },
@@ -64,45 +66,58 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
               builder: (context, setState) {
                 return Stack(
                   children: [
-                    // PageView with images
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(12),
-                      child: mediaUrls.isNotEmpty
-                          ? SizedBox(
-                              height: 280,
-                              width: double.infinity,
-                              child: PageView.builder(
-                                itemCount: mediaUrls.length,
-                                onPageChanged: (index) {
-                                  setState(() {
-                                    currentIndex =
-                                        index; // Update outer variable
-                                  });
-                                },
-                                itemBuilder: (context, index) {
-                                  return CachedNetworkImage(
-                                    imageUrl: mediaUrls[index],
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                        child: CircularProgressIndicator()),
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                      'assets/png_jpeg_images/kamal.JPG',
-                                      fit: BoxFit.cover,
-                                    ),
-                                  );
-                                },
-                              ),
-                            )
-                          : Container(
-                              width: double.infinity,
-                              height: 280,
-                              color: Colors.grey.shade300,
-                              child: const Icon(Icons.image,
-                                  size: 50, color: Colors.grey),
+                    InkWell(
+                      onTap: () {
+                        if (mediaUrls.isNotEmpty) {
+                          final List<String> imageUrls = mediaUrls
+                              .map((url) => url.toString())
+                              .toList();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  ImagePreviewPage(imageUrls: imageUrls, initialIndex: 0),
                             ),
+                          );
+                        }
+                      },
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: mediaUrls.isNotEmpty
+                            ? SizedBox(
+                                height: 280,
+                                width: double.infinity,
+                                child: PageView.builder(
+                                  itemCount: mediaUrls.length,
+                                  onPageChanged: (index) {
+                                    setState(() {
+                                      currentIndex = index;
+                                    });
+                                  },
+                                  itemBuilder: (context, index) {
+                                    return CachedNetworkImage(
+                                      imageUrl: mediaUrls[index],
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => const Center(
+                                          child: CircularProgressIndicator()),
+                                      errorWidget: (context, url, error) =>
+                                          Image.asset(
+                                        'assets/png_jpeg_images/kamal.JPG',
+                                        fit: BoxFit.cover,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              )
+                            : Container(
+                                width: double.infinity,
+                                height: 280,
+                                color: Colors.grey.shade300,
+                                child: const Icon(Icons.image,
+                                    size: 50, color: Colors.grey),
+                              ),
+                      ),
                     ),
-                    // Page Indicator Dots
                     if (mediaUrls.isNotEmpty)
                       Positioned(
                         bottom: 10,
@@ -150,66 +165,71 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                     builder: (context, snapshot) {
                       bool liked = false;
                       if (snapshot.hasData && snapshot.data!.exists) {
-                        final data = snapshot.data!.data()
-                        as Map<String, dynamic>;
+                        final data =
+                            snapshot.data!.data() as Map<String, dynamic>;
                         liked = data['liked'] ?? false;
                       }
                       return Container(
-                        width: 80,
+                          width: 80,
                           height: 50,
                           alignment: Alignment.center,
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: isDarkMode(context)?primaryDarkBlue.withValues(alpha: 0.6):neutralLightGrey.withValues(alpha: 0.6),
+                            color: isDarkMode(context)
+                                ? primaryDarkBlue.withValues(alpha: 0.6)
+                                : neutralLightGrey.withValues(alpha: 0.6),
                             borderRadius: BorderRadius.circular(20.0),
                           ),
-                        child:Row(
-                          children: [
-                            IconButton(
-                              padding: EdgeInsets.zero,
-                              constraints: const BoxConstraints(),
-                              icon: Icon(
-                                liked
-                                    ? CupertinoIcons.hand_thumbsup_fill
-                                    : CupertinoIcons.hand_thumbsup,
-                                color: liked
-                                    ? gradientEndColor
-                                    : textColor(context),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                padding: EdgeInsets.zero,
+                                constraints: const BoxConstraints(),
+                                icon: Icon(
+                                  liked
+                                      ? CupertinoIcons.hand_thumbsup_fill
+                                      : CupertinoIcons.hand_thumbsup,
+                                  color: liked
+                                      ? gradientEndColor
+                                      : textColor(context),
+                                ),
+                                onPressed: () =>
+                                    togglePostLike(postData['postId'], liked),
                               ),
-                              onPressed: () =>
-                                  togglePostLike(postData['postId'], liked),
-                            ),
-                            FutureBuilder<QuerySnapshot>(
-                              future: FirebaseFirestore.instance
-                                  .collection('CommanPosts')
-                                  .doc(postData['postId'])
-                                  .collection('likes')
-                                  .get(),
-                              builder: (context, snapshot) {
-                                int likeCount = 0;
-                                if (snapshot.hasData) {
-                                  likeCount = snapshot.data!.docs.length;
-                                }
-                                return Text(
-                                  '$likeCount',
-                                  style: TextStyle(
-                                      fontSize: 12, color:  Colors.orange),
-                                );
-                              },
-                            ),
-                          ],
-                        )
-                      );
+                              FutureBuilder<QuerySnapshot>(
+                                future: FirebaseFirestore.instance
+                                    .collection('CommanPosts')
+                                    .doc(postData['postId'])
+                                    .collection('likes')
+                                    .get(),
+                                builder: (context, snapshot) {
+                                  int likeCount = 0;
+                                  if (snapshot.hasData) {
+                                    likeCount = snapshot.data!.docs.length;
+                                  }
+                                  return Text(
+                                    '$likeCount',
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.orange),
+                                  );
+                                },
+                              ),
+                            ],
+                          ));
                     },
                   ),
-                  SizedBox(width: 20.0,),
+                  SizedBox(
+                    width: 20.0,
+                  ),
                   Container(
                     width: 100,
                     height: 50,
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDarkMode(context)?primaryDarkBlue.withValues(alpha: 0.6):neutralLightGrey.withValues(alpha: 0.6),
+                      color: isDarkMode(context)
+                          ? primaryDarkBlue.withValues(alpha: 0.6)
+                          : neutralLightGrey.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
                     child: Row(
@@ -218,8 +238,10 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                         IconButton(
                           padding: EdgeInsets.zero,
                           constraints: BoxConstraints(),
-                          icon: Icon(CupertinoIcons.chat_bubble_fill, color: Colors.grey),
-                          onPressed: () => showCommentsBottomSheet(context, postData['postId']),
+                          icon: Icon(CupertinoIcons.chat_bubble_fill,
+                              color: Colors.grey),
+                          onPressed: () => showCommentsBottomSheet(
+                              context, postData['postId']),
                         ),
                         FutureBuilder<QuerySnapshot>(
                           future: FirebaseFirestore.instance
@@ -248,14 +270,25 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                     alignment: Alignment.center,
                     padding: EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: isDarkMode(context)?primaryDarkBlue.withValues(alpha: 0.6):neutralLightGrey.withValues(alpha: 0.6),
+                      color: isDarkMode(context)
+                          ? primaryDarkBlue.withValues(alpha: 0.6)
+                          : neutralLightGrey.withValues(alpha: 0.6),
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Icon(CupertinoIcons.star_circle, color: Colors.orange),
+                    child:
+                        Icon(CupertinoIcons.star_circle, color: Colors.orange),
                   ),
                 ],
               ),
               SizedBox(height: 5),
+              if(postData['text'].isNotEmpty) Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(postData['text'],
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: hintColor(context),
+                    )),
+              ),
               FutureBuilder<Map<String, dynamic>?>(
                 future: addPost.fetchMostLikedComment(postData['postId']),
                 builder: (context, snapshot) {
@@ -274,7 +307,8 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
                   final username = commentData['username'] ?? 'Anonymous';
                   final commentText = commentData['comment'] ?? '';
                   return GestureDetector(
-                    onTap: ()=> showCommentsBottomSheet(context,postData['postId']),
+                    onTap: () =>
+                        showCommentsBottomSheet(context, postData['postId']),
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: Text(
@@ -295,6 +329,7 @@ Future<Widget> PostCard(BuildContext context, Map<String, dynamic> postData) asy
     ),
   );
 }
+
 void togglePostLike(String postId, bool liked) {
   DocumentReference likeDoc = FirebaseFirestore.instance
       .collection('CommanPosts')

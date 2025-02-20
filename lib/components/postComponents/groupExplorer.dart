@@ -43,7 +43,6 @@ Widget buildCreatePostForm(
           );
           return;
         }
-
         await FirebaseFirestore.instance.collection('travel_posts').add({
           'destinations': destinations,
           'startDate': startDate?.toIso8601String(),
@@ -65,8 +64,7 @@ Widget buildCreatePostForm(
           'healthRestrictions': _healthRestrictionsController.text.trim(),
           'createdAt': FieldValue.serverTimestamp(),
         });
-
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainHome())); // Close the form after submission
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainHome()));
       } catch (e) {
         print("Error creating post: $e");
         ScaffoldMessenger.of(context).showSnackBar(
@@ -186,6 +184,19 @@ Widget buildCreatePostForm(
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: _createPost,
+              style: ElevatedButton.styleFrom(
+                foregroundColor: Colors.white, // Text color
+                backgroundColor: PrimaryColor, // Button background color
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                textStyle: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18), // Smooth edges
+                ),
+                elevation: 4, // Shadow effect
+              ),
               child: const Text('Create Post'),
             ),
           ],

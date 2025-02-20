@@ -88,17 +88,17 @@ class CreateAccountState extends State<CreateAnAccount> {
   @override
   Widget build(BuildContext context) {
     var brightness = MediaQuery.of(context).platformBrightness;
-    bool isDarkMode = brightness == Brightness.dark;
+    bool isDarkModee = brightness == Brightness.dark;
     double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: isDarkMode ? const Color(0xFF121212) : Colors.white,
+        color: isDarkModee ? const Color(0xFF121212) : Colors.white,
         child: Stack(
           children: [
             // Background image section at the top
-            topSection(isDarkMode: isDarkMode, screenHeight: screenHeight),
+            topSection(isDarkMode: isDarkModee, screenHeight: screenHeight),
             // Login form section at the bottom
             Positioned(
           bottom: 0,
@@ -109,7 +109,7 @@ class CreateAccountState extends State<CreateAnAccount> {
             width: double.infinity,
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: darkLight(isDarkMode),
+              color: isDarkMode(context)?darkBackground:Colors.white,
               borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),
@@ -135,16 +135,16 @@ class CreateAccountState extends State<CreateAnAccount> {
                   ),
                   const SizedBox(height: 16),
                   // Email or Phone TextField
-                  customTextField(isDarkMode: isDarkMode, name: 'Full Name',icon: Icons.account_circle,obs: false,keyboradType: TextInputType.name,controllerr: _fullname),
+                  customTextField(isDarkMode: isDarkModee, name: 'Full Name',icon: Icons.account_circle,obs: false,keyboradType: TextInputType.name,controllerr: _fullname),
                   const SizedBox(height: 16),
                   // Phone TextField
                   IntlPhoneField (
                     keyboardType: TextInputType.phone,
                     cursorColor: PrimaryColor,
-                    style: TextStyle(color: LightDark(isDarkMode)),
+                    style: TextStyle(color: LightDark(isDarkModee)),
                     // focusNode: focusNode,
                     decoration: InputDecoration(
-                      label: Text('Phone Number',style: TextStyle(color:LightDark(isDarkMode)),
+                      label: Text('Phone Number',style: TextStyle(color:LightDark(isDarkModee)),
                       ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(13.0),
@@ -164,13 +164,13 @@ class CreateAccountState extends State<CreateAnAccount> {
                   ),
                   const SizedBox(height: 16),
                   // Email TextField
-                  customTextField(isDarkMode: isDarkMode, name: 'Email',icon: Icons.email,obs: false,keyboradType: TextInputType.emailAddress,controllerr: _email),
+                  customTextField(isDarkMode: isDarkModee, name: 'Email',icon: Icons.email,obs: false,keyboradType: TextInputType.emailAddress,controllerr: _email),
                   const SizedBox(height: 16),
                   // Password TextField
-                  customTextField(isDarkMode: isDarkMode, name: 'Password',icon: CupertinoIcons.lock,obs: true,keyboradType: TextInputType.text,controllerr: _password),
+                  customTextField(isDarkMode: isDarkModee, name: 'Password',icon: CupertinoIcons.lock,obs: true,keyboradType: TextInputType.text,controllerr: _password),
                   const SizedBox(height: 16),
                   // Password TextField
-                  customTextField(isDarkMode: isDarkMode, name: 'Confirm Password',icon: CupertinoIcons.lock,obs: true,keyboradType: TextInputType.text,controllerr: _confirmpassword),
+                  customTextField(isDarkMode: isDarkModee, name: 'Confirm Password',icon: CupertinoIcons.lock,obs: true,keyboradType: TextInputType.text,controllerr: _confirmpassword),
                   const SizedBox(height: 32),
                   // Forgot Password and Create Account links
                   SizedBox(

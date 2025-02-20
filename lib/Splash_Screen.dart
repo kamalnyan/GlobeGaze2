@@ -27,7 +27,7 @@ class _MyHomePageState extends State<MyHomePage> {
     shareP = await SharedPreferences.getInstance();
     bool showWelcomeScreen = shareP?.getBool('welcomedata') ?? true;
     User? currentUser = _auth.currentUser;
-    Timer(const Duration(seconds: 4), () {
+    Timer(const Duration(seconds: 2), () {
       if (showWelcomeScreen) {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => WelcomeScreen()),
@@ -55,7 +55,6 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: isDarkMode ? Colors.black : Colors.white, // Background color
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -82,7 +81,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             ),
             SizedBox(height: 40),
-            Lottie.asset( 'assets/lottie_animation/a1.json',
+            Lottie.asset( 'assets/lottie_animation/splashCompass.json',
               // isDarkMode
               //     ? 'assets/lottie_animation/darkanimationspalsh.json'
               //     : 'assets/lottie_animation/lightanimationspalsh.json',

@@ -201,7 +201,8 @@ class _AddPageState extends State<AddPage> {
             backgroundColor: isDarkMode(context)?darkBackground:Colors.white,
             title:  Text('Create Post',style: TextStyle(color: textColor(context)),),
             actions: [
-              TextButton(
+              if(_isToggled!= true)
+                TextButton(
                 onPressed: _handlePost,
                 child: const Text(
                   'Post',

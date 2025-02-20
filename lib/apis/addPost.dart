@@ -45,6 +45,7 @@ class addPost{
       'text': postText,
       'mediaUrls': mediaUrls,
       'location': location,
+      'postId':postId,
       'createdAt': Timestamp.now(),
     });
     await FirebaseFirestore.instance.collection('CommanPosts').doc(postId,).set({

@@ -99,12 +99,10 @@ class LoginState extends State<Login> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: isDarkMode ? const Color(0xFF121212) : Colors.white, // Professional dark and light background
+        color: isDarkMode ? const Color(0xFF121212) : Colors.white,
         child: Stack(
           children: [
-            // Background image section at the top
             topSection(isDarkMode: isDarkMode, screenHeight: screenHeight),
-            // Login form section at the bottom
             Positioned(
               bottom: 0,
               left: 0,
@@ -114,7 +112,7 @@ class LoginState extends State<Login> {
                width: double.infinity,
                padding: const EdgeInsets.all(16),
                decoration: BoxDecoration(
-                color: darkLight(isDarkMode),
+                color: isDarkMode ? darkBackground : Colors.white,
                 borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(30),
                 topRight: Radius.circular(30),

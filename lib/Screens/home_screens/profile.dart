@@ -157,6 +157,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            scrollDirection: Axis.vertical,
             child: Container(
               padding: const EdgeInsets.all(20.0),
               child: Column(
