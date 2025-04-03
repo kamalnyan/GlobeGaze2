@@ -4,8 +4,7 @@ import 'package:email_otp/email_otp.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_notification_channel/flutter_notification_channel.dart';
-import 'package:flutter_notification_channel/notification_importance.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart'; 
 import 'package:globegaze/Screens/home_screens/search.dart';
 import 'package:globegaze/components/postComponents/group_explorer_postcard.dart';
 import 'package:globegaze/themes/appTheme.dart';
@@ -14,24 +13,25 @@ import 'Providers/postProviders/imageMediaProviders.dart';
 import 'Providers/postProviders/locationProvider.dart';
 import 'Splash_Screen.dart';
 import 'apis/APIs.dart';
+
 late Size mq;
+
+// Initialize the notifications plugin
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+FlutterLocalNotificationsPlugin();
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   await FirebaseAppCheck.instance.activate();
+
+  // Email OTP configuration (unchanged)
   EmailOTP.config(
     appName: 'Globe Gaze',
     otpType: OTPType.numeric,
     emailTheme: EmailTheme.v1,
     otpLength: 6,
   );
-  // EmailOTP.setSMTP(
-  //   host: '<www.globegaze.com>',
-  //   emailPort: EmailPort.port25,
-  //   secureType: SecureType.tls,
-  //   username: '<trythis7320@gmail.com>',
-  //   password: '<Kamal@7320>',
-  // );
   EmailOTP.setTemplate(
     template: '''
   <div style="background-color: #f7f7f7; padding: 40px; font-family: Arial, sans-serif;">
@@ -50,43 +50,59 @@ Future<void> main() async {
   </div>
   ''',
   );
-  var result = await FlutterNotificationChannel().registerNotificationChannel(
-    description: 'User Message Notifaction',
-    id: 'globegazemsg',
-    importance: NotificationImportance.IMPORTANCE_HIGH,
-    name: 'Message',
+
+  // Initialize flutter_local_notifications
+  const AndroidInitializationSettings initializationSettingsAndroid =
+  AndroidInitializationSettings('@mipmap/ic_launcher'); // Use your app icon
+  const InitializationSettings initializationSettings = InitializationSettings(
+    android: initializationSettingsAndroid,
   );
-    log(result);
+  await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+  // Create the notification channel
+  const AndroidNotificationChannel channel = AndroidNotificationChannel(
+    'globegazemsg', // Same ID as before
+    'Message', // Same name as before
+    description: 'User Message Notification', // Same description as before
+    importance: Importance.high, // Matches IMPORTANCE_HIGH
+  );
+  await flutterLocalNotificationsPlugin
+      .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+      ?.createNotificationChannel(channel);
+  log('Notification channel "globegazemsg" registered');
+
   runApp(
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => MediaProvider()),
         ChangeNotifierProvider(create: (_) => LocationProvider()),
       ],
-      child: MyApp(),
+      child: const MyApp(),
     ),
   );
 }
 
-class MyApp extends StatefulWidget{
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
   @override
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp>with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     log("Global lifecycle observer registered");
   }
+
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     log("Global lifecycle observer removed");
     super.dispose();
   }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     log("Global lifecycle state changed: $state");
@@ -114,11 +130,6 @@ class _MyAppState extends State<MyApp>with WidgetsBindingObserver {
       theme: lightTheme,
       themeMode: ThemeMode.system,
       home:  MyHomePage(),
-      // home: Postcard(),
     );
   }
 }
-
-
-
-
