@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/Screens/home_screens/group_details_screen.dart';
 import 'package:globegaze/themes/colors.dart';
 
 import '../../themes/dark_light_switch.dart';
@@ -17,6 +17,19 @@ class GroupExplorerPostCard extends StatelessWidget {
   final int duration;
   final int travelers;
   final String genderPreference;
+  final String itinerary;
+  final String preferredAge;
+  final String accommodation;
+  final String transportation;
+  final String organizerName;
+  final String contactInfo;
+  final String socialMediaHandle;
+  final String travelInterests;
+  final String experienceLevel;
+  final String emergencyContact;
+  final String healthRestrictions;
+  final String createdBy;
+  final String creatorName;
 
   const GroupExplorerPostCard({
     super.key,
@@ -26,11 +39,53 @@ class GroupExplorerPostCard extends StatelessWidget {
     required this.duration,
     required this.travelers,
     required this.genderPreference,
+    this.itinerary = '',
+    this.preferredAge = '',
+    this.accommodation = '',
+    this.transportation = '',
+    this.organizerName = '',
+    this.contactInfo = '',
+    this.socialMediaHandle = '',
+    this.travelInterests = '',
+    this.experienceLevel = '',
+    this.emergencyContact = '',
+    this.healthRestrictions = '',
+    required this.createdBy,
+    required this.creatorName,
   });
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onLongPress: (){
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => GroupDetailsScreen(
+              time: time,
+              destination: destination,
+              budget: budget,
+              duration: duration,
+              travelers: travelers,
+              genderPreference: genderPreference,
+              itinerary: itinerary,
+              preferredAge: preferredAge,
+              accommodation: accommodation,
+              transportation: transportation,
+              organizerName: organizerName,
+              contactInfo: contactInfo,
+              socialMediaHandle: socialMediaHandle,
+              travelInterests: travelInterests,
+              experienceLevel: experienceLevel,
+              emergencyContact: emergencyContact,
+              healthRestrictions: healthRestrictions,
+              createdBy: createdBy,
+              creatorName: creatorName,
+            ),
+          ),
+        );
+      },
+      onLongPress: () {
         showCustomMenu(context);
       },
       child: SizedBox(
@@ -43,53 +98,84 @@ class GroupExplorerPostCard extends StatelessWidget {
           elevation: 0,
           margin: const EdgeInsets.all(16),
           child: Padding(
-            padding: const EdgeInsets.all(23),
+            padding: const EdgeInsets.all(16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      children: [
-                        Text(
-                          destination,
-                          style:  TextStyle(
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            destination,
+                            style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                               color: textColor(context)
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
-                        ),
-                        Text(
-                          MyDateUtil.getFormattedTimeStamp(context: context,timestamp: time),
-                          style:  TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.bold,
+                          const SizedBox(height: 4),
+                          Text(
+                            MyDateUtil.getFormattedTimeStamp(context: context,timestamp: time),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                               color: hintColor(context)
+                            ),
                           ),
-                        ),
-                      ]
+                          const SizedBox(height: 4),
+                          Row(
+                            children: [
+                              Icon(Icons.person, size: 14, color: hintColor(context)),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  'Created by $creatorName',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: hintColor(context),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     const Icon(Icons.location_on, color: PrimaryColor),
                   ],
                 ),
-                const SizedBox(height: 10),
-                const Divider(),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildInfoTile(context,Icons.attach_money, 'Budget', '\$${budget.toStringAsFixed(2)}'),
-                    _buildInfoTile(context,Icons.calendar_today, 'Duration', '$duration Days'),
-                  ],
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    _buildInfoTile(context,Icons.group, 'Travelers', '$travelers People'),
-                    _buildInfoTile(context,Icons.male_outlined, 'Gender', genderPreference.isEmpty?'Unknown':genderPreference),
-                  ],
+                const SizedBox(height: 8),
+                const Divider(height: 1),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildInfoTile(context,Icons.attach_money, 'Budget', '\$${budget.toStringAsFixed(2)}'),
+                          _buildInfoTile(context,Icons.calendar_today, 'Duration', '$duration Days'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          _buildInfoTile(context,Icons.group, 'Travelers', '$travelers People'),
+                          _buildInfoTile(context,Icons.male_outlined, 'Gender', genderPreference.isEmpty?'Unknown':genderPreference),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -102,13 +188,25 @@ class GroupExplorerPostCard extends StatelessWidget {
   Widget _buildInfoTile(BuildContext context,IconData icon, String label, String value) {
     return Row(
       children: [
-        Icon(icon, color: PrimaryColor),
+        Icon(icon, color: PrimaryColor, size: 20),
         const SizedBox(width: 8),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label, style:  TextStyle(fontWeight: FontWeight.w500, color: textColor(context))),
-            Text(value, style:  TextStyle(fontSize: 16, fontWeight: FontWeight.bold,color: hintColor(context))),
+            Text(label, 
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500, 
+                color: textColor(context)
+              ),
+            ),
+            Text(value, 
+              style: TextStyle(
+                fontSize: 14, 
+                fontWeight: FontWeight.bold,
+                color: hintColor(context)
+              ),
+            ),
           ],
         ),
       ],

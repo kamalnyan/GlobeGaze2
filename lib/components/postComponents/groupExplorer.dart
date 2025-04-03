@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:globegaze/Screens/home_screens/main_home.dart';
 import 'package:intl/intl.dart';
 import '../../themes/colors.dart';
@@ -43,6 +44,16 @@ Widget buildCreatePostForm(
           );
           return;
         }
+
+        // Get current user's UID
+        final currentUser = FirebaseAuth.instance.currentUser;
+        if (currentUser == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('You must be logged in to create a post')),
+          );
+          return;
+        }
+
         await FirebaseFirestore.instance.collection('travel_posts').add({
           'destinations': destinations,
           'startDate': startDate?.toIso8601String(),
@@ -63,6 +74,7 @@ Widget buildCreatePostForm(
           'emergencyContact': _emergencyContactController.text.trim(),
           'healthRestrictions': _healthRestrictionsController.text.trim(),
           'createdAt': FieldValue.serverTimestamp(),
+          'createdBy': currentUser.uid, // Add the current user's UID
         });
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => MainHome()));
       } catch (e) {

@@ -1,0 +1,2 @@
+/Users/deepankarsingh/AndroidStudioProjects/GlobeGaze2/android/app/.cxx/Debug/4y5s1n46/x86_64/CMakeFiles/edit_cache.dir
+/Users/deepankarsingh/AndroidStudioProjects/GlobeGaze2/android/app/.cxx/Debug/4y5s1n46/x86_64/CMakeFiles/rebuild_cache.dir

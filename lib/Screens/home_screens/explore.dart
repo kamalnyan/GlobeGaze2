@@ -277,14 +277,72 @@ class _ExploreState extends State<Explore> {
           itemBuilder: (context, index) {
             final postData = allPosts[index];
             if (postData.containsKey('destinations')) {
-              return GroupExplorerPostCard(
-                genderPreference:postData['genderPreference'] ,
-                time: postData['createdAt'],
-                destination: postData['destinations'][0],
-                budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
-                duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
-                travelers:
-                int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+              // Get the createdBy field with null check
+              final String? creatorId = postData['createdBy'] as String?;
+              
+              // If no creator ID, return the card with default values
+              if (creatorId == null || creatorId.isEmpty) {
+                return GroupExplorerPostCard(
+                  genderPreference: postData['genderPreference'] ?? '',
+                  time: postData['createdAt'],
+                  destination: postData['destinations'][0],
+                  budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
+                  duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
+                  travelers: int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+                  createdBy: '',
+                  creatorName: 'Unknown User',
+                  itinerary: postData['itinerary'] ?? '',
+                  preferredAge: postData['preferredAge'] ?? '',
+                  accommodation: postData['accommodation'] ?? '',
+                  transportation: postData['transportation'] ?? '',
+                  organizerName: postData['organizerName'] ?? '',
+                  contactInfo: postData['contactInfo'] ?? '',
+                  socialMediaHandle: postData['socialMediaHandle'] ?? '',
+                  travelInterests: postData['travelInterests'] ?? '',
+                  experienceLevel: postData['experienceLevel'] ?? '',
+                  emergencyContact: postData['emergencyContact'] ?? '',
+                  healthRestrictions: postData['healthRestrictions'] ?? '',
+                );
+              }
+
+              return FutureBuilder<DocumentSnapshot>(
+                future: FirebaseFirestore.instance
+                    .collection('Users')
+                    .doc(creatorId)
+                    .get(),
+                builder: (context, userSnapshot) {
+                  if (userSnapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  
+                  String creatorName = 'Unknown User';
+                  if (userSnapshot.hasData && userSnapshot.data!.exists) {
+                    final userData = userSnapshot.data!.data() as Map<String, dynamic>?;
+                    creatorName = userData?['FullName']?.toString() ?? 'Unknown User';
+                  }
+
+                  return GroupExplorerPostCard(
+                    genderPreference: postData['genderPreference'] ?? '',
+                    time: postData['createdAt'],
+                    destination: postData['destinations'][0],
+                    budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
+                    duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
+                    travelers: int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+                    createdBy: creatorId,
+                    creatorName: creatorName,
+                    itinerary: postData['itinerary'] ?? '',
+                    preferredAge: postData['preferredAge'] ?? '',
+                    accommodation: postData['accommodation'] ?? '',
+                    transportation: postData['transportation'] ?? '',
+                    organizerName: postData['organizerName'] ?? '',
+                    contactInfo: postData['contactInfo'] ?? '',
+                    socialMediaHandle: postData['socialMediaHandle'] ?? '',
+                    travelInterests: postData['travelInterests'] ?? '',
+                    experienceLevel: postData['experienceLevel'] ?? '',
+                    emergencyContact: postData['emergencyContact'] ?? '',
+                    healthRestrictions: postData['healthRestrictions'] ?? '',
+                  );
+                },
               );
             } else {
               return FutureBuilder<Widget>(
