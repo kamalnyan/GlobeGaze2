@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:globegaze/Screens/chat/messegescreen.dart';
+import 'package:globegaze/components/chatComponents/Chatusermodel.dart';
 import 'package:globegaze/themes/colors.dart';
 import '../../themes/dark_light_switch.dart';
 import '../../components/mydate.dart';
@@ -212,8 +214,40 @@ class GroupDetailsScreen extends StatelessWidget {
                 Icons.message,
                 color: PrimaryColor,
               ),
-              onPressed: () {
-                // Add message functionality
+              onPressed: () async {
+                if (createdBy.isNotEmpty) {
+                  // Fetch user data from Firestore
+                  final userDoc = await FirebaseFirestore.instance
+                      .collection('Users')
+                      .doc(createdBy)
+                      .get();
+
+                  if (userDoc.exists) {
+                    final userData = userDoc.data()!;
+                    // Create ChatUser object with all required fields
+                    final chatUser = ChatUser(
+                      image: userData['Image'] ?? 'assets/png_jpeg_images/user.jpg',
+                      about: userData['About'] ?? 'Hey! I am using GlobeGaze',
+                      name: userData['FullName'] ?? 'Unknown User',
+                      createdAt: userData['CreatedAt'] ?? Timestamp.now(),
+                      isOnline: userData['isOnline'] ?? false,
+                      id: createdBy,
+                      lastActive: userData['lastActive'] ?? Timestamp.now(),
+                      email: userData['Email'] ?? '',
+                      pushToken: userData['pushToken'] ?? '',
+                      username: userData['Username'] ?? '',
+                      Phone: userData['Phone'] ?? '',
+                    );
+                    
+                    // Navigate to message screen
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => Messegescreen(user: chatUser),
+                      ),
+                    );
+                  }
+                }
               },
             ),
           ],

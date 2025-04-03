@@ -279,6 +279,7 @@ class _ExploreState extends State<Explore> {
             if (postData.containsKey('destinations')) {
               // Get the createdBy field with null check
               final String? creatorId = postData['createdBy'] as String?;
+              final String postId = postData['id'] ?? ''; // Get the document ID
               
               // If no creator ID, return the card with default values
               if (creatorId == null || creatorId.isEmpty) {
@@ -286,9 +287,9 @@ class _ExploreState extends State<Explore> {
                   genderPreference: postData['genderPreference'] ?? '',
                   time: postData['createdAt'],
                   destination: postData['destinations'][0],
-                  budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
-                  duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
-                  travelers: int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+                  budget: double.tryParse(postData['budget']?.toString() ?? '0') ?? 0.0,
+                  duration: int.tryParse(postData['duration']?.toString() ?? '0') ?? 0,
+                  travelers: int.tryParse(postData['travelersCount']?.toString() ?? '0') ?? 0,
                   createdBy: '',
                   creatorName: 'Unknown User',
                   itinerary: postData['itinerary'] ?? '',
@@ -302,6 +303,7 @@ class _ExploreState extends State<Explore> {
                   experienceLevel: postData['experienceLevel'] ?? '',
                   emergencyContact: postData['emergencyContact'] ?? '',
                   healthRestrictions: postData['healthRestrictions'] ?? '',
+                  postId: postId,
                 );
               }
 
@@ -325,9 +327,9 @@ class _ExploreState extends State<Explore> {
                     genderPreference: postData['genderPreference'] ?? '',
                     time: postData['createdAt'],
                     destination: postData['destinations'][0],
-                    budget: double.tryParse(postData['budget'] ?? '0') ?? 0.0,
-                    duration: int.tryParse(postData['duration'] ?? '0') ?? 0,
-                    travelers: int.tryParse(postData['travelersCount'] ?? '0') ?? 0,
+                    budget: double.tryParse(postData['budget']?.toString() ?? '0') ?? 0.0,
+                    duration: int.tryParse(postData['duration']?.toString() ?? '0') ?? 0,
+                    travelers: int.tryParse(postData['travelersCount']?.toString() ?? '0') ?? 0,
                     createdBy: creatorId,
                     creatorName: creatorName,
                     itinerary: postData['itinerary'] ?? '',
@@ -341,6 +343,7 @@ class _ExploreState extends State<Explore> {
                     experienceLevel: postData['experienceLevel'] ?? '',
                     emergencyContact: postData['emergencyContact'] ?? '',
                     healthRestrictions: postData['healthRestrictions'] ?? '',
+                    postId: postId,
                   );
                 },
               );

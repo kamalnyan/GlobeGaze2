@@ -55,7 +55,7 @@ Future<Widget> PostCard(
             icon: Icon(CupertinoIcons.ellipsis_vertical_circle_fill),
             color: textColor(context),
             onPressed: () {
-              showCustomMenu(context);
+              showCustomMenu(context, postData['postId']);
             },
           ),
         ),

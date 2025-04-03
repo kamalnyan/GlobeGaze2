@@ -30,6 +30,7 @@ class GroupExplorerPostCard extends StatelessWidget {
   final String healthRestrictions;
   final String createdBy;
   final String creatorName;
+  final String postId;
 
   const GroupExplorerPostCard({
     super.key,
@@ -52,6 +53,7 @@ class GroupExplorerPostCard extends StatelessWidget {
     this.healthRestrictions = '',
     required this.createdBy,
     required this.creatorName,
+    required this.postId,
   });
 
   @override
@@ -86,7 +88,7 @@ class GroupExplorerPostCard extends StatelessWidget {
         );
       },
       onLongPress: () {
-        showCustomMenu(context);
+        showCustomMenu(context, postId);
       },
       child: SizedBox(
         height: 290,
