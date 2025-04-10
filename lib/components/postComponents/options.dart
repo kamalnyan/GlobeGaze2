@@ -5,12 +5,20 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../Screens/home_screens/edit_group_post_screen.dart';
+import '../../Screens/home_screens/edit_common_post_screen.dart';
+import '../../Screens/home_screens/profile.dart';
 import '../../themes/colors.dart';
 import '../dynamicScreenSize.dart';
 import '../../apis/APIs.dart';
 import '../chatComponents/Chatusermodel.dart';
 
-void showCustomMenu(BuildContext context, String postId) {
+// Enum to define post types
+enum PostType {
+  commonPost,
+  travelPost
+}
+
+void showCustomMenu(BuildContext context, String postId, {PostType postType = PostType.commonPost}) {
   final currentUser = FirebaseAuth.instance.currentUser;
   
   Future<void> addToFavorites() async {
@@ -59,12 +67,23 @@ void showCustomMenu(BuildContext context, String postId) {
   Future<bool> isCreator() async {
     if (currentUser == null) return false;
     try {
-      final postDoc = await FirebaseFirestore.instance
-          .collection('travel_posts')
-          .doc(postId)
-          .get();
-      return postDoc.exists && postDoc.data()?['createdBy'] == currentUser.uid;
+      if (postType == PostType.travelPost) {
+        // For travel posts
+        final postDoc = await FirebaseFirestore.instance
+            .collection('travel_posts')
+            .doc(postId)
+            .get();
+        return postDoc.exists && postDoc.data()?['createdBy'] == currentUser.uid;
+      } else {
+        // For common posts
+        final postDoc = await FirebaseFirestore.instance
+            .collection('CommanPosts')
+            .doc(postId)
+            .get();
+        return postDoc.exists && postDoc.data()?['userId'] == currentUser.uid;
+      }
     } catch (e) {
+      print('Error checking creator status: $e');
       return false;
     }
   }
@@ -154,6 +173,31 @@ void showCustomMenu(BuildContext context, String postId) {
     }
   }
 
+  // Delete post function
+  Future<void> deletePost() async {
+    try {
+      if (postType == PostType.travelPost) {
+        await FirebaseFirestore.instance
+            .collection('travel_posts')
+            .doc(postId)
+            .delete();
+      } else {
+        await FirebaseFirestore.instance
+            .collection('CommanPosts')
+            .doc(postId)
+            .delete();
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Post deleted successfully')),
+      );
+      Navigator.pop(context);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting post: ${e.toString()}')),
+      );
+    }
+  }
+
   showGeneralDialog(
     context: context,
     barrierDismissible: true,
@@ -180,16 +224,28 @@ void showCustomMenu(BuildContext context, String postId) {
                   final isCreator = isCreatorSnapshot.data!;
 
                   return FutureBuilder<DocumentSnapshot>(
-                    future: FirebaseFirestore.instance
-                        .collection('travel_posts')
-                        .doc(postId)
-                        .get(),
+                    future: postType == PostType.travelPost
+                        ? FirebaseFirestore.instance
+                            .collection('travel_posts')
+                            .doc(postId)
+                            .get()
+                        : FirebaseFirestore.instance
+                            .collection('CommanPosts')
+                            .doc(postId)
+                            .get(),
                     builder: (context, postSnapshot) {
                       if (!postSnapshot.hasData) {
                         return const CircularProgressIndicator();
                       }
 
-                      final creatorId = postSnapshot.data!.get('createdBy') as String;
+                      if (!postSnapshot.data!.exists) {
+                        return const Text('Post not found');
+                      }
+
+                      // Get creator ID based on post type
+                      final creatorId = postType == PostType.travelPost
+                          ? postSnapshot.data!.get('createdBy') as String
+                          : postSnapshot.data!.get('userId') as String;
 
                       return FutureBuilder<bool>(
                         future: isFriend(creatorId),
@@ -217,12 +273,21 @@ void showCustomMenu(BuildContext context, String postId) {
                                   label: "Edit",
                                   onTap: () {
                                     Navigator.pop(context);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => EditGroupPostScreen(postId: postId),
-                                      ),
-                                    );
+                                    if (postType == PostType.travelPost) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditGroupPostScreen(postId: postId),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => EditCommonPostScreen(postId: postId),
+                                        ),
+                                      );
+                                    }
                                   },
                                 ),
                               if (!isCreator && !isFriend) // Show friend request option only if not creator and not friends
@@ -238,6 +303,12 @@ void showCustomMenu(BuildContext context, String postId) {
                                 label: "About this account",
                                 onTap: () {
                                   Navigator.pop(context);
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfilePage(userId: creatorId),
+                                    ),
+                                  );
                                 },
                               ),
                               _buildMenuItem(
@@ -255,6 +326,7 @@ void showCustomMenu(BuildContext context, String postId) {
                                   label: "Delete",
                                   onTap: () {
                                     Navigator.pop(context);
+                                    deletePost();
                                   },
                                 ),
                             ],

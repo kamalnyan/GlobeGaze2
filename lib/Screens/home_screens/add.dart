@@ -47,7 +47,6 @@ class _AddPageState extends State<AddPage> {
   DateTime? _endDate;
   final ValueNotifier<double> _uploadProgress = ValueNotifier(0.0);
   bool _isUploading = false;
-  bool _isDraftSaved = false;
 
   @override
   void dispose() {
@@ -184,9 +183,6 @@ class _AddPageState extends State<AddPage> {
 
   @override
   Widget build(BuildContext context) {
-    void callSett() {
-      setState(() {});
-    }
      locationProvider = Provider.of<LocationProvider>(context);
     return ChangeNotifierProvider(
       create: (_) => MediaProvider(),
@@ -290,7 +286,6 @@ class _AddPageState extends State<AddPage> {
 
     // Update UI state and clear inputs
     setState(() {
-      _isDraftSaved = true;
       _savedDrafts.add(draft);
       _postController.clear();
       locationProvider.setSelectedLocation("");
@@ -329,7 +324,6 @@ class _AddPageState extends State<AddPage> {
         ) ??
         false;
     if (!saveAsDraft) {
-      setState(() => _isDraftSaved = false);
     }
     return saveAsDraft;
   }

@@ -34,12 +34,31 @@ Future<Widget> PostCard(
         ListTile(
           leading: CircleAvatar(
             radius: 18,
-            backgroundImage: (user != null &&
+            child: (user != null &&
                     user.image.isNotEmpty &&
                     user.image.startsWith('http'))
-                ? CachedNetworkImageProvider(user.image)
-                : const AssetImage('assets/png_jpeg_images/user.jpg')
-                    as ImageProvider,
+                ? ClipOval(
+                    child: CachedNetworkImage(
+                      imageUrl: user.image,
+                      fit: BoxFit.cover,
+                      width: 36,
+                      height: 36,
+                      placeholder: (context, url) => const Center(
+                          child: CircularProgressIndicator()),
+                      errorWidget: (context, url, error) => Image.asset(
+                        'assets/png_jpeg_images/user.jpg',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  )
+                : ClipOval(
+                    child: Image.asset(
+                      'assets/png_jpeg_images/user.jpg',
+                      fit: BoxFit.cover,
+                      width: 36,
+                      height: 36,
+                    ),
+                  ),
             backgroundColor: Colors.grey.shade300,
           ),
           title: Text(
@@ -55,7 +74,7 @@ Future<Widget> PostCard(
             icon: Icon(CupertinoIcons.ellipsis_vertical_circle_fill),
             color: textColor(context),
             onPressed: () {
-              showCustomMenu(context, postData['postId']);
+              showCustomMenu(context, postData['postId'], postType: PostType.commonPost);
             },
           ),
         ),

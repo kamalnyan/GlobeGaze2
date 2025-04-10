@@ -9,11 +9,13 @@ import '../postComponents/imagePreview.dart';
 
 
 
-Widget profileGrid(BuildContext context) {
+Widget profileGrid(BuildContext context, [String? userId]) {
+  final String targetUserId = userId ?? Apis.uid;
+  
   return StreamBuilder<QuerySnapshot>(
     stream: FirebaseFirestore.instance
         .collection('Users')
-        .doc(Apis.uid)
+        .doc(targetUserId)
         .collection('Posts')
         .orderBy('createdAt', descending: true)
         .snapshots(),

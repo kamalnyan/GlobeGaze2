@@ -88,7 +88,7 @@ class GroupExplorerPostCard extends StatelessWidget {
         );
       },
       onLongPress: () {
-        showCustomMenu(context, postId);
+        showCustomMenu(context, postId, postType: PostType.travelPost);
       },
       child: SizedBox(
         height: 290,

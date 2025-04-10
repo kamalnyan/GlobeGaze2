@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:shimmer/shimmer.dart';
 import '../../apis/addPost.dart';
 import '../../apis/datamodel.dart';
 import '../../components/exploreComponents/suggestion.dart';
@@ -107,10 +106,6 @@ class _ExploreState extends State<Explore> {
   Future<void> fetchPlaces() async {
     isLoadingPlacesNotifier.value = true;
     Map<String, double>? currentloc = await getLocationBounds();
-    if (currentloc == null) {
-      isLoadingPlacesNotifier.value = false;
-      return;
-    }
     try {
       double lonMin = currentloc['lonMin']!;
       double latMin = currentloc['latMin']!;
@@ -120,17 +115,32 @@ class _ExploreState extends State<Explore> {
       List<dynamic> fetchedPlaces =
       await PlaceService().fetchPlaces(lonMin, latMin, lonMax, latMax);
       if (mounted) {
-        placesNotifier.value = fetchedPlaces;
-        placesNotifier.value .sort((a, b) {
-          DateTime timeA = (a['properties']['createdAt'] as Timestamp).toDate();
-          DateTime timeB = (b['properties']['createdAt'] as Timestamp).toDate();
-          return timeB.compareTo(timeA); // Latest first
+        // Filter out places with null timestamps and sort the rest
+        placesNotifier.value = fetchedPlaces.where((place) {
+          final properties = place['properties'] as Map<String, dynamic>;
+          return properties['createdAt'] != null;
+        }).toList();
+        
+        placesNotifier.value.sort((a, b) {
+          final aTimestamp = (a['properties']['createdAt'] as Timestamp?)?.toDate();
+          final bTimestamp = (b['properties']['createdAt'] as Timestamp?)?.toDate();
+          
+          // If either timestamp is null, put it at the end
+          if (aTimestamp == null) return 1;
+          if (bTimestamp == null) return -1;
+          
+          return bTimestamp.compareTo(aTimestamp); // Latest first
         });
       }
     } catch (e) {
       print('Error fetching places: $e');
+      if (mounted) {
+        placesNotifier.value = [];
+      }
     } finally {
-      isLoadingPlacesNotifier.value = false;
+      if (mounted) {
+        isLoadingPlacesNotifier.value = false;
+      }
     }
   }
 

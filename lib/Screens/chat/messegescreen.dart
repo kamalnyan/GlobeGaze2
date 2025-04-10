@@ -9,7 +9,6 @@ import 'package:globegaze/components/chatComponents/messege_card.dart';
 import 'package:globegaze/encrypt_decrypt/endrypt.dart';
 import 'package:globegaze/themes/dark_light_switch.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../apis/APIs.dart';
 import '../../components/LoadingAnimation.dart';
 import '../../components/chatComponents/messegemodel.dart';
@@ -140,8 +139,7 @@ class _MessegescreenState extends State<Messegescreen>{
                         final data = snapshot.data!.docs;
                         _list = data
                                 .map((e) => Message.fromJson(e.data()))
-                                .toList() ??
-                            [];
+                                .toList();
                         if (_list.isNotEmpty) {
                           return ListView.builder(
                             reverse: true,
@@ -159,11 +157,7 @@ class _MessegescreenState extends State<Messegescreen>{
                             ),
                           );
                         }
-                      default:
-                        return const Center(
-                          child: Text('Something went wrong'),
-                        );
-                    }
+                      }
                   },
                 ),
               ),

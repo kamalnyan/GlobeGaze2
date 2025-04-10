@@ -22,7 +22,7 @@ class ExploreController extends GetxController {
     isLoading.value = true;
     Map<String, double>? currentloc = await getLocationBounds();
     try {
-      double lonMin = currentloc!['lonMin']!;
+      double lonMin = currentloc['lonMin']!;
       double latMin = currentloc['latMin']!;
       double lonMax = currentloc['lonMax']!;
       double latMax = currentloc['latMax']!;
