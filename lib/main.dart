@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'; 
 import 'package:globegaze/Screens/home_screens/search.dart';
 import 'package:globegaze/components/postComponents/group_explorer_postcard.dart';
+import 'package:globegaze/services/zego_cloud_service.dart';
 import 'package:globegaze/themes/appTheme.dart';
 import 'package:provider/provider.dart';
 import 'Providers/postProviders/imageMediaProviders.dart';
@@ -23,7 +24,9 @@ FlutterLocalNotificationsPlugin();
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  await FirebaseAppCheck.instance.activate();
+  await FirebaseAppCheck.instance.activate(
+    androidProvider: AndroidProvider.debug,
+  );
 
   // Email OTP configuration (unchanged)
   EmailOTP.config(
@@ -70,6 +73,9 @@ Future<void> main() async {
       .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
       ?.createNotificationChannel(channel);
   log('Notification channel "globegazemsg" registered');
+
+  // Initialize ZegoCloud service
+  await ZegoCloudService().initialize();
 
   runApp(
     MultiProvider(

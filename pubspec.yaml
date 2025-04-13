@@ -57,6 +57,10 @@ dependencies:
   google_nav_bar:
   line_icons:
   flutter_local_notifications:
+  pull_to_refresh: ^2.0.0
+  zego_uikit:
+  zego_uikit_prebuilt_call:
+  zego_uikit_signaling_plugin:
 
 dev_dependencies:
   flutter_test:

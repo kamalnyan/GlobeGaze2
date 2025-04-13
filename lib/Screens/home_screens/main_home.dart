@@ -11,6 +11,7 @@ import '../../RequestPermissions/permissions.dart';
 import '../../themes/colors.dart';
 import '../Notifaction/notifactions.dart';
 import '../chat/chatList_ui.dart';
+import '../../screens/group_join_screen.dart';
 import 'add.dart';
 import 'explore.dart';
 
@@ -93,6 +94,10 @@ class _MainHomeState extends State<MainHome> {
                   text: 'Add',
                 ),
                 GButton(
+                  icon: LineIcons.users,
+                  text: 'Groups',
+                ),
+                GButton(
                   icon: LineIcons.user,
                   text: 'Profile',
                 ),
@@ -116,83 +121,53 @@ class _MainHomeState extends State<MainHome> {
     switch (pageIndex) {
       case 0:
         return AppBar(
-          backgroundColor: isDarkMode ? darkBackground : Colors.white,
-          title: RichText(
-            text: TextSpan(
-              style: TextStyle(
-                fontSize: 25,
-                color: textColor(context),
-              ),
-              children: const [
-                TextSpan(
-                  text: 'E',
-                  style: TextStyle(
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'G',
+                style: TextStyle(
                     fontWeight: FontWeight.bold,
-                    color: PrimaryColor,
-                    fontSize: 26,
-                  ),
-                ),
-                TextSpan(text: 'xplore'),
-              ],
-            ),
+                    color: isDarkMode ? Colors.white : Colors.green,
+                    fontFamily: 'MonaSans'),
+              ),
+              Text(
+                'LOBE',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : textColor(context),
+                    fontFamily: 'MonaSans'),
+              ),
+              SizedBox(width: 10),
+              Text(
+                'G',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : Colors.green,
+                    fontFamily: 'MonaSans'),
+              ),
+              Text(
+                'AZE',
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: isDarkMode ? Colors.white : textColor(context),
+                    fontFamily: 'MonaSans'),
+              ),
+            ],
           ),
+          backgroundColor: isDarkMode ? darkBackground : Colors.white,
+          elevation: 0,
+          centerTitle: true,
           actions: [
-            StreamBuilder<QuerySnapshot>(
-              stream: FirebaseFirestore.instance
-                  .collection('Users')
-                  .doc(userId)
-                  .collection('Request')
-                  .where('userAdded', isEqualTo: false)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                int notificationCount = 0;
-                if (snapshot.hasData) {
-                  notificationCount = snapshot.data!.docs.length;
-                }
-                return Stack(
-                  children: [
-                    IconButton(
-                      icon: Icon(
-                        CupertinoIcons.bell,
-                        color: textColor(context),
-                      ),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Notifactions(userId: userId!),
-                          ),
-                        );
-                      },
-                    ),
-                    if (notificationCount > 0)
-                      Positioned(
-                        right: 8,
-                        top: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 12,
-                            minHeight: 12,
-                          ),
-                          child: Text(
-                            '$notificationCount',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                  ],
-                );
+            IconButton(
+              icon: const Icon(LineIcons.bell),
+              color: textColor(context),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => Notifactions(userId: userId!)));
               },
             ),
+            const SizedBox(width: 15),
             IconButton(
               icon: Icon(FontAwesomeIcons.facebookMessenger, color: textColor(context)),
               onPressed: () {
@@ -208,6 +183,13 @@ class _MainHomeState extends State<MainHome> {
       case 2:
         return null;
       case 3:
+        return AppBar(
+          title: const Text("Groups"),
+          backgroundColor: isDarkMode ? darkBackground : Colors.white,
+          elevation: 0,
+          centerTitle: true,
+        );
+      case 4:
         return null;
       default:
         return AppBar(
@@ -220,6 +202,7 @@ class _MainHomeState extends State<MainHome> {
     Explore(),
     SearchPage(),
     AddPage(),
+    GroupJoinScreen(),
     ProfilePage(),
   ];
 }
