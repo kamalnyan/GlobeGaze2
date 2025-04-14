@@ -10,6 +10,7 @@ import 'package:line_icons/line_icons.dart';
 import '../../RequestPermissions/permissions.dart';
 import '../../themes/colors.dart';
 import '../Notifaction/notifactions.dart';
+import '../chat/Chats.dart';
 import '../chat/chatList_ui.dart';
 import '../../screens/group_join_screen.dart';
 import 'add.dart';
@@ -94,10 +95,6 @@ class _MainHomeState extends State<MainHome> {
                   text: 'Add',
                 ),
                 GButton(
-                  icon: LineIcons.users,
-                  text: 'Groups',
-                ),
-                GButton(
                   icon: LineIcons.user,
                   text: 'Profile',
                 ),
@@ -172,7 +169,7 @@ class _MainHomeState extends State<MainHome> {
               icon: Icon(FontAwesomeIcons.facebookMessenger, color: textColor(context)),
               onPressed: () {
                 Navigator.push(
-                    context, MaterialPageRoute(builder: (context) => ChatList()));
+                    context, MaterialPageRoute(builder: (context) => SwipeableScreens()));
               },
             ),
             const SizedBox(width: 15),
@@ -202,7 +199,6 @@ class _MainHomeState extends State<MainHome> {
     Explore(),
     SearchPage(),
     AddPage(),
-    GroupJoinScreen(),
     ProfilePage(),
   ];
 }
