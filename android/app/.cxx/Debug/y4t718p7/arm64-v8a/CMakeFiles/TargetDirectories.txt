@@ -1,0 +1,2 @@
+/Users/apple/development/GlobeGaze2/android/app/.cxx/Debug/y4t718p7/arm64-v8a/CMakeFiles/edit_cache.dir
+/Users/apple/development/GlobeGaze2/android/app/.cxx/Debug/y4t718p7/arm64-v8a/CMakeFiles/rebuild_cache.dir

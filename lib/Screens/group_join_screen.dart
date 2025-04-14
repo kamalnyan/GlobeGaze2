@@ -144,10 +144,6 @@ class _GroupJoinScreenState extends State<GroupJoinScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Groups'),
-        elevation: 0,
-      ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : Column(

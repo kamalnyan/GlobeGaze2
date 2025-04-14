@@ -154,7 +154,6 @@ class _MainHomeState extends State<MainHome> {
           ),
           backgroundColor: isDarkMode ? darkBackground : Colors.white,
           elevation: 0,
-          centerTitle: true,
           actions: [
             IconButton(
               icon: const Icon(LineIcons.bell),
@@ -180,12 +179,7 @@ class _MainHomeState extends State<MainHome> {
       case 2:
         return null;
       case 3:
-        return AppBar(
-          title: const Text("Groups"),
-          backgroundColor: isDarkMode ? darkBackground : Colors.white,
-          elevation: 0,
-          centerTitle: true,
-        );
+        return null;
       case 4:
         return null;
       default:

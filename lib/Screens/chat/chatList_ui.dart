@@ -44,13 +44,13 @@ class _ChatListState extends State<ChatList> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           iconTheme: IconThemeData(
             color: textColor(context), // Change back button color
           ),
           backgroundColor: isDarkMode(context)
               ?darkBackground:Colors.white,
-          title: _isSearching
-              ? CupertinoSearchTextField(
+          title: CupertinoSearchTextField(
             autofocus: true,
             controller: _searchController,
             style: TextStyle(
@@ -69,15 +69,6 @@ class _ChatListState extends State<ChatList> {
               }
               setState(() {});
             },
-          )
-              :  Text(
-            'Messages',
-            style: TextStyle(
-              fontSize: 29,
-              fontFamily: 'MonaSans',
-              fontWeight: FontWeight.bold,
-              color: textColor(context),
-            ),
           ),
           actions: [
             IconButton(

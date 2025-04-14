@@ -65,7 +65,6 @@ class _ExploreState extends State<Explore> {
       if (exploreController.isLoading.value) {
         return const ShimmerCardScroller();
       }
-
       if (exploreController.places.isEmpty) {
         return Center(
           child: Column(
@@ -89,7 +88,6 @@ class _ExploreState extends State<Explore> {
           ),
         );
       }
-
       return SizedBox(
         height: 210,
         child: PageView.builder(

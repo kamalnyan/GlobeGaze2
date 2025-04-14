@@ -43,26 +43,11 @@ class DestinationCard extends StatelessWidget {
       onTap: _launchMap,
       child: Container(
         width: double.infinity,
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10), // Adjusted margin
-        padding: const EdgeInsets.fromLTRB(17, 17, 17, 8), // Reduced bottom padding
+        margin: const EdgeInsets.symmetric(horizontal:7, vertical: 7),
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 8),
         decoration: BoxDecoration(
           color: isDarkMode(context)?primaryDarkBlue:neutralLightGrey.withValues(alpha: 0.6),
-          // gradient: LinearGradient(
-          //   colors: [
-          //     neutralLightGrey.withValues(alpha: 0.5),
-          //     Colors.white.withValues(alpha:0.7),
-          //   ],
-          //   begin: Alignment.topLeft,
-          //   end: Alignment.bottomRight,
-          // ),
           borderRadius: BorderRadius.circular(20),
-          // boxShadow: [
-          //   BoxShadow(
-          //     color: Colors.black.withValues(alpha:0.1),
-          //     blurRadius: 20,
-          //     offset: const Offset(0, 10),
-          //   ),
-          // ],
           border: Border.all(color: Colors.white.withValues(alpha:0.2)),
         ),
         child: Column(
