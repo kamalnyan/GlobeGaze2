@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:io';
+import 'dart:ui';
 
 import 'package:email_otp/email_otp.dart';
 import 'package:firebase_app_check/firebase_app_check.dart';
@@ -27,7 +29,6 @@ Future<void> main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.debug,
   );
-
   // Email OTP configuration (unchanged)
   EmailOTP.config(
     appName: 'Globe Gaze',

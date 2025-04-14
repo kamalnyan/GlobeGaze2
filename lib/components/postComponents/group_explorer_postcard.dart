@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:globegaze/Screens/home_screens/group_details_screen.dart';
+import 'package:globegaze/Screens/home_screens/group_details_post_screen.dart';
 import 'package:globegaze/themes/colors.dart';
 
 import '../../themes/dark_light_switch.dart';
@@ -55,6 +55,7 @@ class GroupExplorerPostCard extends StatelessWidget {
     required this.createdBy,
     required this.creatorName,
     required this.postId,
+    required String groupId,
   });
 
   @override
@@ -75,7 +76,7 @@ class GroupExplorerPostCard extends StatelessWidget {
           Navigator.push(
             context,
             PageRouteBuilder(
-              pageBuilder: (context, animation, secondaryAnimation) => GroupDetailsScreen(
+              pageBuilder: (context, animation, secondaryAnimation) => GroupDetailsPostScreen(
                 time: time,
                 destination: destination,
                 budget: budget,
@@ -95,6 +96,7 @@ class GroupExplorerPostCard extends StatelessWidget {
                 healthRestrictions: healthRestrictions,
                 createdBy: createdBy,
                 creatorName: creatorName,
+                groupId: 'tVivetRtTX5xx6avqpJn',
               ),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 const begin = Offset(0.0, 0.05);
@@ -393,7 +395,7 @@ class GroupExplorerPostCard extends StatelessWidget {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => GroupDetailsScreen(
+                                    builder: (context) => GroupDetailsPostScreen(
                                       time: time,
                                       destination: destination,
                                       budget: budget,
@@ -413,6 +415,7 @@ class GroupExplorerPostCard extends StatelessWidget {
                                       healthRestrictions: healthRestrictions,
                                       createdBy: createdBy,
                                       creatorName: creatorName,
+                                      groupId: 'tVivetRtTX5xx6avqpJn',
                                     ),
                                   ),
                                 );

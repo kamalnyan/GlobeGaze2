@@ -326,7 +326,7 @@ class _ExploreState extends State<Explore> {
           experienceLevel: postData['experienceLevel'] ?? '',
           emergencyContact: postData['emergencyContact'] ?? '',
           healthRestrictions: postData['healthRestrictions'] ?? '',
-          postId: postId,
+          postId: postId, groupId: '',
         );
       },
     );
@@ -354,6 +354,7 @@ class _ExploreState extends State<Explore> {
       emergencyContact: postData['emergencyContact'] ?? '',
       healthRestrictions: postData['healthRestrictions'] ?? '',
       postId: postId,
+      groupId:  postData['groupId'] ?? '',
     );
   }
 

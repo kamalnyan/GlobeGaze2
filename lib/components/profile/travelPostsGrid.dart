@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import '../../themes/colors.dart';
 import '../postComponents/gridPostShimmar.dart';
 import '../postComponents/group_explorer_postcard.dart';
-import '../../Screens/home_screens/group_details_screen.dart';
+import '../../Screens/home_screens/group_details_post_screen.dart';
 import '../../apis/APIs.dart';
 import '../isDarkMode.dart';
 
@@ -47,6 +47,7 @@ Widget travelPostsGrid(BuildContext context, [String? userId]) {
           final String genderPreference = postData['genderPreference']?.toString() ?? '';
           final String createdBy = postData['createdBy']?.toString() ?? '';
           final String postId = postData['id']?.toString() ?? '';
+          final String groupId = postData['groupId']?.toString() ?? '';
           final Timestamp time = postData['createdAt'] as Timestamp? ?? Timestamp.now();
 
           return GroupExplorerPostCard(
@@ -70,6 +71,7 @@ Widget travelPostsGrid(BuildContext context, [String? userId]) {
             createdBy: createdBy,
             creatorName: Apis.me.name,
             postId: postId,
+            groupId:groupId,
           );
         },
       );

@@ -150,6 +150,7 @@ Widget FavoritesGrid(BuildContext context) {
                           createdBy: createdBy,
                           creatorName: creatorName,
                           postId: postId,
+                          groupId: postData['groupId']?.toString() ?? '',
                         ),
                       );
                     },

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:globegaze/components/isDarkMode.dart';
 import 'package:globegaze/themes/colors.dart';
+import 'package:line_icons/line_icon.dart';
+import 'package:line_icons/line_icons.dart';
 
 import '../../screens/group_join_screen.dart';
 import 'chatList_ui.dart';
@@ -31,6 +34,10 @@ class _SwipeableScreensState extends State<SwipeableScreens> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: primaryDarkBlue,
+        iconTheme: IconThemeData(
+          color: isDarkMode(context)?Colors.white:Colors.black,
+        ),
         title: Text(_currentPage == 0 ? 'Messages' : 'Groups',
           style: TextStyle(
             fontSize: 29,
@@ -61,6 +68,7 @@ class _SwipeableScreensState extends State<SwipeableScreens> {
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor: isDarkMode(context)?primaryDarkBlue:Colors.white,
         currentIndex: _currentPage,
         onTap: (index) {
           _pageController.animateToPage(
@@ -69,16 +77,24 @@ class _SwipeableScreensState extends State<SwipeableScreens> {
             curve: Curves.easeInOut,
           );
         },
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.chat),
+            icon: Icon(LineIcons.facebookMessenger, color: textColor(context)),
             label: 'Chats',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.group),
+            icon: Icon(LineIcons.users, color: textColor(context)),
             label: 'Group Details',
           ),
         ],
+        selectedLabelStyle: TextStyle(
+          color: textColor(context),
+        ),
+        unselectedLabelStyle: TextStyle(
+          color: hintColor(context),
+        ),
+        selectedItemColor: textColor(context),
+        unselectedItemColor: hintColor(context),
       ),
     );
   }
