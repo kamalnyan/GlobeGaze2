@@ -118,7 +118,7 @@ class GroupExplorerPostCard extends StatelessWidget {
           showCustomMenu(context, postId, postType: PostType.travelPost);
         },
         child: Container(
-          height: 320,
+          height: 390,
           width: double.infinity,
           child: Stack(
             children: [
@@ -433,30 +433,6 @@ class GroupExplorerPostCard extends StatelessWidget {
                                   letterSpacing: 0.5,
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.1)
-                                  : Colors.grey.withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.05)
-                                    : Colors.grey.withOpacity(0.2),
-                              ),
-                            ),
-                            child: IconButton(
-                              onPressed: () {
-                                showCustomMenu(context, postId, postType: PostType.travelPost);
-                              },
-                              icon: Icon(
-                                Icons.more_vert,
-                                color: isDark ? Colors.white : Colors.black87,
-                              ),
-                              tooltip: 'More Options',
                             ),
                           ),
                         ],
