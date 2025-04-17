@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:globegaze/Screens/chat/messegescreen.dart';
 import 'package:globegaze/components/chatComponents/Chatusermodel.dart';
 import 'package:globegaze/themes/colors.dart';
+import 'package:line_icons/line_icons.dart';
 import '../../screens/group_details_screen.dart';
 import '../../themes/dark_light_switch.dart';
 import '../../components/mydate.dart';
@@ -61,6 +62,7 @@ class GroupDetailsPostScreen extends StatefulWidget {
 class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
   bool _isLoading = false;
   List<String> members = [];
+  String groupName='';
 
   Future<void> getGroupMembers(String groupId) async {
     try {
@@ -68,11 +70,11 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
           .collection('groups')
           .doc(groupId)
           .get();
-
       if (doc.exists) {
-        // Properly cast the members list and update state
         List<dynamic> membersList = doc.get('members');
+        String name = doc.get('name') ?? 'Unnamed Group'; // Fetch the name field
         setState(() {
+          groupName = name;
           members = membersList.cast<String>();
         });
       } else {
@@ -98,46 +100,21 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
   @override
   void initState() {
     super.initState();
-    // Call getGroupMembers inside initState
     getGroupMembers(widget.groupId);
   }
 
   void _navigateToChat() async {
     if (widget.createdBy.isNotEmpty) {
       try {
-        final userDoc = await FirebaseFirestore.instance
-            .collection('Users')
-            .doc(widget.createdBy)
-            .get();
-
-        if (userDoc.exists) {
-          final userData = userDoc.data()!;
-          final chatUser = ChatUser(
-            image: userData['Image'] ?? 'assets/png_jpeg_images/user.jpg',
-            about: userData['About'] ?? 'Hey! I am using GlobeGaze',
-            name: userData['FullName'] ?? 'Unknown User',
-            createdAt: userData['CreatedAt'] ?? Timestamp.now(),
-            isOnline: userData['isOnline'] ?? false,
-            id: widget.createdBy,
-            lastActive: userData['lastActive'] ?? Timestamp.now(),
-            email: userData['Email'] ?? '',
-            pushToken: userData['pushToken'] ?? '',
-            username: userData['Username'] ?? '',
-            Phone: userData['Phone'] ?? '',
-          );
-
           // Navigate to message screen
           if (mounted) {
             Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (_) => GroupDetailsScreen(groupId: widget.groupId, groupName: 'kak', members: members,),
+                builder: (_) => GroupDetailsScreen(groupId: widget.groupId, groupName: groupName, members: members,),
               ),
             );
           }
-        } else {
-          _showSnackBar('User information not found');
-        }
       } catch (e) {
         _showSnackBar('Error connecting to chat: ${e.toString()}');
       }
@@ -147,7 +124,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: isDarkMode(context) ? primaryDarkBlue : Colors.grey[50],
+      backgroundColor: isDarkMode(context) ? darkBackground : Colors.grey[50],
       appBar: AppBar(
         title: Text(
             'Group Details',
@@ -157,7 +134,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
               fontSize: 20,
             )
         ),
-        backgroundColor: isDarkMode(context) ? primaryDarkBlue : Colors.white,
+        backgroundColor: isDarkMode(context) ? darkBackground : Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(color: textColor(context)),
         actions: [
@@ -600,8 +577,6 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
       // Success notification
       if (mounted) {
         _showSnackBar('Successfully joined the group!');
-
-        // Refresh the members list
         await getGroupMembers(widget.groupId);
       }
     } catch (e) {
@@ -674,7 +649,7 @@ class _GroupDetailsScreenState extends State<GroupDetailsPostScreen> {
                 children: [
                   Icon(
                       isUserMember
-                          ? Icons.message_rounded
+                          ? LineIcons.facebookMessenger
                           : Icons.group_add_rounded,
                       size: 22
                   ),

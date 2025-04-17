@@ -32,6 +32,7 @@ class GroupExplorerPostCard extends StatelessWidget {
   final String createdBy;
   final String creatorName;
   final String postId;
+  final String groupId;
 
   const GroupExplorerPostCard({
     super.key,
@@ -55,7 +56,7 @@ class GroupExplorerPostCard extends StatelessWidget {
     required this.createdBy,
     required this.creatorName,
     required this.postId,
-    required String groupId,
+    required this.groupId,
   });
 
   @override
@@ -96,7 +97,7 @@ class GroupExplorerPostCard extends StatelessWidget {
                 healthRestrictions: healthRestrictions,
                 createdBy: createdBy,
                 creatorName: creatorName,
-                groupId: 'tVivetRtTX5xx6avqpJn',
+                groupId: groupId,
               ),
               transitionsBuilder: (context, animation, secondaryAnimation, child) {
                 const begin = Offset(0.0, 0.05);
@@ -415,7 +416,7 @@ class GroupExplorerPostCard extends StatelessWidget {
                                       healthRestrictions: healthRestrictions,
                                       createdBy: createdBy,
                                       creatorName: creatorName,
-                                      groupId: 'tVivetRtTX5xx6avqpJn',
+                                      groupId: groupId,
                                     ),
                                   ),
                                 );

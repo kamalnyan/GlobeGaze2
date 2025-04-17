@@ -61,6 +61,7 @@ dependencies:
   zego_uikit:
   zego_uikit_prebuilt_call:
   zego_uikit_signaling_plugin:
+  flutter_animate:
 
 dev_dependencies:
   flutter_test:

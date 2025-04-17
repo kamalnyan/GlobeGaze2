@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import '../../apis/APIs.dart';
 import '../../components/LoadingAnimation.dart';
 import '../../components/isDarkMode.dart';
-import '../../components/profile/drawer.dart';
 import '../../components/profile/drawerfunctions.dart';
 import '../../components/profile/editprofile.dart';
 import '../../components/profile/profileGrid.dart';
@@ -19,7 +18,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../components/favorites/favoritesGrid.dart';
 
 class ProfilePage extends StatefulWidget {
-  final String? userId; // Optional userId parameter
+  final String? userId;
   const ProfilePage({super.key, this.userId});
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -96,14 +95,20 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: isDarkMode(context)?darkBackground:Colors.white,
-        title: Text(username,style: TextStyle(color: textColor(context)),),
+        backgroundColor: isDarkMode(context) ? darkBackground : Colors.white,
+        title: Text(
+          username,
+          style: TextStyle(color: textColor(context)),
+        ),
         actions: [
           if (isCurrentUser) // Only show menu for current user
             Builder(
               builder: (context) {
                 return IconButton(
-                  icon: Icon(CupertinoIcons.slider_horizontal_3,color: textColor(context),),
+                  icon: Icon(
+                    CupertinoIcons.slider_horizontal_3,
+                    color: textColor(context),
+                  ),
                   onPressed: () {
                     Scaffold.of(context).openEndDrawer();
                   },
@@ -112,110 +117,114 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
         ],
       ),
-      endDrawer: isCurrentUser ? Drawer(
-        child: Container(
-          color: isDarkMode(context) ? darkBackground : Colors.white,
-          padding: const EdgeInsets.only(top: 40.0),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              ListTile(
-                leading: const Icon(
-                  CupertinoIcons.lock,
-                  color: PrimaryColor,
+      endDrawer: isCurrentUser
+          ? Drawer(
+              child: Container(
+                color: isDarkMode(context) ? darkBackground : Colors.white,
+                padding: const EdgeInsets.only(top: 40.0),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: <Widget>[
+                    ListTile(
+                      leading: const Icon(
+                        CupertinoIcons.lock,
+                        color: PrimaryColor,
+                      ),
+                      title: Text('Change password',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        handleForget(context);
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        CupertinoIcons.trash,
+                        color: Colors.red,
+                      ),
+                      title: Text('Delete data',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        confirmAndDelete(
+                            context,
+                            "Delete Data",
+                            "Are you sure you want to permanently delete your data?",
+                            "Delete Permanently", () {
+                          // UserService.deleteUserData(context, false);
+                        });
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        CupertinoIcons.trash_slash_fill,
+                        color: Colors.red,
+                      ),
+                      title: Text('Delete account',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const DeleteAccount()));
+                      },
+                    ),
+                    ListTile(
+                      leading: const Icon(
+                        CupertinoIcons.question_circle_fill,
+                        color: PrimaryColor,
+                      ),
+                      title: Text('FAQ',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        // Navigator.push(context, MaterialPageRoute(builder: (context) =>  FAQScreen()));
+                      },
+                    ),
+                    ListTile(
+                      leading: const FaIcon(
+                        FontAwesomeIcons.faceSmile,
+                        color: PrimaryColor,
+                      ),
+                      title: Text('Feedback',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        collectFeedbackAndSend(
+                            context,
+                            "Feedback Form",
+                            "We value your feedback! Please share your thoughts below.",
+                            "Send Feedback",
+                            Apis.me.name);
+                      },
+                    ),
+                    ListTile(
+                      leading: const FaIcon(
+                        FontAwesomeIcons.code,
+                        color: PrimaryColor,
+                      ),
+                      title: Text('About us',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        showAboutUsDialog(context);
+                      },
+                    ),
+                    ListTile(
+                      leading: const FaIcon(
+                        CupertinoIcons.power,
+                        color: Colors.red,
+                      ),
+                      title: Text('Log out',
+                          style: TextStyle(color: textColor(context))),
+                      onTap: () {
+                        Navigator.pop(context);
+                        handleLogout(context);
+                      },
+                    ),
+                  ],
                 ),
-                title: Text('Change password',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  handleForget(context);
-                },
               ),
-              ListTile(
-                leading: const Icon(
-                  CupertinoIcons.trash,
-                  color: Colors.red,
-                ),
-                title: Text('Delete data',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  Navigator.pop(context);
-                  confirmAndDelete(
-                      context,
-                      "Delete Data",
-                      "Are you sure you want to permanently delete your data?",
-                      "Delete Permanently", () {
-                    // UserService.deleteUserData(context, false);
-                  });
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  CupertinoIcons.trash_slash_fill,
-                  color: Colors.red,
-                ),
-                title: Text('Delete account',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => const DeleteAccount()));
-                },
-              ),
-              ListTile(
-                leading: const Icon(
-                  CupertinoIcons.question_circle_fill,
-                  color: PrimaryColor,
-                ),
-                title: Text('FAQ',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  // Navigator.push(context, MaterialPageRoute(builder: (context) =>  FAQScreen()));
-                },
-              ),
-              ListTile(
-                leading: const FaIcon(
-                  FontAwesomeIcons.faceSmile,
-                  color: PrimaryColor,
-                ),
-                title: Text('Feedback',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  Navigator.pop(context);
-                  collectFeedbackAndSend(
-                      context,
-                      "Feedback Form",
-                      "We value your feedback! Please share your thoughts below.",
-                      "Send Feedback",
-                      Apis.me.name
-                  );
-                },
-              ),
-              ListTile(
-                leading: const FaIcon(
-                  FontAwesomeIcons.code,
-                  color: PrimaryColor,
-                ),
-                title: Text('About us',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  Navigator.pop(context);
-                  showAboutUsDialog(context);
-                },
-              ),
-              ListTile(
-                leading: const FaIcon(
-                  CupertinoIcons.power,
-                  color: Colors.red,
-                ),
-                title: Text('Log out',
-                    style: TextStyle(color: textColor(context))),
-                onTap: () {
-                  Navigator.pop(context);
-                  handleLogout(context);
-                },
-              ),
-            ],
-          ),
-        ),
-      ) : null,
+            )
+          : null,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : _errorMessage != null
@@ -251,10 +260,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                     child: CachedNetworkImage(
                                       imageUrl: imageUrl,
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => const Center(
-                                          child: CupertinoActivityIndicator()),
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                              child:
+                                                  CupertinoActivityIndicator()),
                                       errorWidget: (context, url, error) =>
-                                          Image.asset('assets/png_jpeg_images/user.jpg'),
+                                          Image.asset(
+                                              'assets/png_jpeg_images/user.jpg'),
                                     ),
                                   ),
                                 ),
@@ -264,15 +276,17 @@ class _ProfilePageState extends State<ProfilePage> {
                                     right: 0,
                                     child: GestureDetector(
                                       onTap: () async {
-                                        final XFile? image = await picker.pickImage(
+                                        final XFile? image =
+                                            await picker.pickImage(
                                           source: ImageSource.gallery,
                                           imageQuality: 70,
                                         );
                                         if (image != null) {
                                           setState(() => _isUploading = true);
                                           try {
-                                            String newImageUrl = await Apis.uploadProfilePicture(
-                                                File(image.path));
+                                            String newImageUrl =
+                                                await Apis.uploadProfilePicture(
+                                                    File(image.path));
                                             setState(() {
                                               imageUrl = newImageUrl;
                                               Apis.me.image = newImageUrl;
@@ -280,7 +294,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                             });
                                           } catch (e) {
                                             log('Error sending image: $e');
-                                            setState(() => _isUploading = false);
+                                            setState(
+                                                () => _isUploading = false);
                                           }
                                         } else {
                                           log('No image selected');
@@ -290,7 +305,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                         width: 35,
                                         height: 35,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(100),
+                                          borderRadius:
+                                              BorderRadius.circular(100),
                                           color: PrimaryColor,
                                         ),
                                         child: const Icon(
@@ -304,8 +320,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               ],
                             ),
                             const SizedBox(height: 10),
-                            Text(fullName,style: TextStyle(color: textColor(context)),),
-                            Text(about,style: TextStyle(color: hintColor(context)),),
+                            Text(
+                              fullName,
+                              style: TextStyle(color: textColor(context)),
+                            ),
+                            Text(
+                              about,
+                              style: TextStyle(color: hintColor(context)),
+                            ),
                             if (isCurrentUser) // Only show edit profile button for current user
                               Column(
                                 children: [
@@ -321,19 +343,26 @@ class _ProfilePageState extends State<ProfilePage> {
                                         phone: phone,
                                         onSaveChanges: (updatedData) {
                                           setState(() {
-                                            if (updatedData.containsKey('FullName')) {
-                                              fullName = updatedData['FullName'];
+                                            if (updatedData
+                                                .containsKey('FullName')) {
+                                              fullName =
+                                                  updatedData['FullName'];
                                             }
-                                            if (updatedData.containsKey('Email')) {
+                                            if (updatedData
+                                                .containsKey('Email')) {
                                               email = updatedData['Email'];
                                             }
-                                            if (updatedData.containsKey('Phone')) {
+                                            if (updatedData
+                                                .containsKey('Phone')) {
                                               phone = updatedData['Phone'];
                                             }
-                                            if (updatedData.containsKey('Username')) {
-                                              username = updatedData['Username'];
+                                            if (updatedData
+                                                .containsKey('Username')) {
+                                              username =
+                                                  updatedData['Username'];
                                             }
-                                            if (updatedData.containsKey('About')) {
+                                            if (updatedData
+                                                .containsKey('About')) {
                                               about = updatedData['About'];
                                             }
                                           });
@@ -357,8 +386,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ],
                               ),
-                            const SizedBox(height: 30),
-                            const Divider(),
                             const SizedBox(height: 10),
                             DefaultTabController(
                               length: 3,
@@ -375,15 +402,14 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ],
                                   ),
                                   SizedBox(
-                                    height: 400, // Adjust height as needed
+                                    height: 400,
                                     child: TabBarView(
                                       children: [
                                         // Common Posts Tab
                                         profileGrid(context, widget.userId ?? Apis.uid),
                                         // Travel Posts Tab
                                         travelPostsGrid(context, widget.userId ?? Apis.uid),
-                                        // Favorites Tab (only show for current user)
-                                        widget.userId == null || widget.userId == Apis.uid
+                                        Apis.uid != null || Apis.uid.isNotEmpty
                                             ? FavoritesGrid(context)
                                             : const Center(child: Text('Only visible to profile owner')),
                                       ],
@@ -399,7 +425,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     if (_isUploading)
                       const Opacity(
                         opacity: 0.7,
-                        child: ModalBarrier(dismissible: false, color: Colors.black),
+                        child: ModalBarrier(
+                            dismissible: false, color: Colors.black),
                       ),
                     if (_isUploading)
                       Center(

@@ -71,7 +71,7 @@ Widget travelPostsGrid(BuildContext context, [String? userId]) {
             createdBy: createdBy,
             creatorName: Apis.me.name,
             postId: postId,
-            groupId:groupId,
+            groupId: groupId,
           );
         },
       );

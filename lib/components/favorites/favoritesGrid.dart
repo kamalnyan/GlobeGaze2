@@ -12,22 +12,19 @@ Widget FavoritesGrid(BuildContext context) {
     stream: FirebaseFirestore.instance
         .collection('Users')
         .doc(Apis.uid)
-        .collection('Favorites')
-        .orderBy('addedAt', descending: true)
+        .collection('bookmarks')
+        .orderBy('savedAt', descending: true)
         .snapshots(),
     builder: (context, favSnapshot) {
       if (favSnapshot.connectionState == ConnectionState.waiting) {
         return gridShimmar();
       }
-
       if (favSnapshot.hasError) {
         return Center(child: Text('Error loading favorites'));
       }
-
       if (!favSnapshot.hasData || favSnapshot.data!.docs.isEmpty) {
         return Center(child: Text('No favorites yet'));
       }
-
       return ListView.builder(
         shrinkWrap: true,
         physics: const AlwaysScrollableScrollPhysics(),
@@ -87,7 +84,7 @@ Widget FavoritesGrid(BuildContext context) {
                       FirebaseFirestore.instance
                           .collection('Users')
                           .doc(Apis.uid)
-                          .collection('Favorites')
+                          .collection('bookmarks')
                           .doc(postId)
                           .delete();
                     }

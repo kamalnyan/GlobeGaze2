@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:globegaze/themes/colors.dart';
 import 'package:intl/intl.dart';
 
 class MessageBubble extends StatelessWidget {
@@ -19,7 +20,7 @@ class MessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
     final messageColor = isMe 
-        ? (isDarkMode ? Colors.blue[700] : Colors.blue[500])
+        ? (isDarkMode ?PrimaryColor : PrimaryColor)
         : (isDarkMode ? Colors.grey[800] : Colors.grey[200]);
     
     return Row(
